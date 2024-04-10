@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {Alert, View, TextInput, Button, Text ,StyleSheet , TouchableOpacity ,Keyboard, TouchableWithoutFeedback , ImageBackground} from 'react-native';
+import {API_KEY , AUTH_DOMAIN , PROJECT_ID, STORAGE_BUCKET,MESSAGING_SENDER_ID ,APP_ID} from '@env'
 import { signInWithEmailAndPassword ,getAuth } from 'firebase/auth';
 import SignupWithEmail from './SignupWithEmail';
 const bgImg = require('../assets/images/clothes-background.png');
@@ -67,7 +68,7 @@ export default function LoginWithEmail() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+   console.log(API_KEY)
   const signIn = async () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -75,7 +76,7 @@ export default function LoginWithEmail() {
       setIsAuthenticated(true);
       console.log('User signed in successfully!');
     } catch (error) {
-        Alert.alert('Please try again!', 'Your emai/password is incorrect', [
+        Alert.alert('Please try again!', 'Your email/password is incorrect', [
             {text: 'OK', onPress: () => console.log('OK Pressed')},
           ]);
       console.log(error.message);

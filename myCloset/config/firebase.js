@@ -3,8 +3,9 @@ import { initializeApp, getApp } from "firebase/app";
 import { initializeAuth, getAuth, getReactNativePersistence } from 'firebase/auth';
 import {API_KEY , AUTH_DOMAIN , PROJECT_ID, STORAGE_BUCKET,MESSAGING_SENDER_ID ,APP_ID} from '@env'
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+console.log(API_KEY);
 const firebaseConfig = {
-  apiKey: API_KEY,
+  apiKey: API_KEY || 'mock_key',
   authDomain: AUTH_DOMAIN,
   projectId: PROJECT_ID,
   storageBucket: STORAGE_BUCKET,
