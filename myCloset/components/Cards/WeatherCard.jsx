@@ -6,6 +6,7 @@ const WeatherCard = ({ weatherData }) => {
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       {weatherData.forecast.forecastday.map((day, index) => (
         <View
+         key={index}
           style={{
             backgroundColor: 'white',
             padding: 16,

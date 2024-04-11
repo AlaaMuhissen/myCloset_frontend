@@ -16,13 +16,15 @@ const Dashboard = () => {
     const { user } = useAuthentication();
   return (
    <> 
-   
-    <View >{IconComponent}</View>
-    <Header name={user?.displayName || 'User'} title="Dashboard" />
+     <View style= {styles.container}>
+    {/* <View >{IconComponent}</View>
+    <Header name={user?.displayName || 'User'} title="Dashboard" /> */}
     <GetWeather />
     <View>
-      <ShowCategories />
+      {/* <ShowCategories /> */}
     </View>
+
+     </View>
    
    </>
   )
@@ -30,9 +32,9 @@ const Dashboard = () => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
+      backgroundColor: '#090909',
+    
+     
     },
     button: {
       marginTop: 10
