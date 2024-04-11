@@ -10,12 +10,11 @@ const WeatherCard = ({ weatherData }) => {
           style={{
             backgroundColor: 'white',
             padding: 16,
-           
             flexDirection: 'row', alignItems: 'center',
             justifyContent: 'space-between',
             borderRadius: 8,
-            marginHorizontal: 8,
-            shadowColor: '#000',
+            marginRight: 8,
+            shadowColor: '#fff',
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.25,
             shadowRadius: 4,

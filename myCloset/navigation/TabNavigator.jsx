@@ -1,105 +1,127 @@
-import React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
-
-
-
+import React, { useState } from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Feather from 'react-native-vector-icons/Feather';
+import { View, Modal, TouchableOpacity } from 'react-native';
+import AddDropdown from '../components/AddDropdown';
 import Dashboard from '../screens/Dashboard';
 import AddClothes from '../screens/AddClothes';
 import AddOutfit from '../screens/AddOutfit';
-import { View } from 'react-native';
-
+import UserCategory from '../screens/UserCategory';
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
 
 const TabNavigator = () => {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedComponent, setSelectedComponent] = useState(null);
+
+  const handleComponentSelect = (component) => {
+    setSelectedComponent(component);
+    setShowDropdown(false);
+  };
+
   return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarShowLabel: false,
-        tabBarStyle: {
-          backgroundColor: '#363636',
-          borderTopColor: '#363636', // Same as background color
-          borderTopWidth: 1, // Optional: Adjust border width as needed
-        },
-        tabBarInactiveTintColor: '#fff',
-        tabBarActiveTintColor: '#ffb845',
-        
-      }}>
-      <Tab.Screen
-        name="dashboard"
-        component={Dashboard}
-        options={({route}) => ({
+    <View style={{ flex: 1 }}>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showDropdown}
+        onRequestClose={() => setShowDropdown(false)}
+      >
+        <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center',backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <AddDropdown onSelect={handleComponentSelect} />
+        </View>
+      </Modal>
+
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarShowLabel: false,
           tabBarStyle: {
-            display: getTabBarVisibility(route),
             backgroundColor: '#363636',
+            borderTopColor: '#363636',
+            borderTopWidth: 1,
           },
-          tabBarIcon: ({color, size}) => (
-            <Ionicons name="home-outline" color={color} size={size} />
-          ),
-        })}
-      />
-      <Tab.Screen
-        name="Calendar"
-        component={AddClothes}
-        options={{
-          // tabBarBadge: 3,
-          // tabBarBadgeStyle: {backgroundColor: 'yellow'},
-          tabBarIcon: ({color, size}) => (
-            <Ionicons name="calendar-outline" color={color} size={size}/>
-          ),
+          tabBarInactiveTintColor: '#fff',
+          tabBarActiveTintColor: '#ffb845',
         }}
-      />
-    
-      <Tab.Screen
-        name="AddClothes"
-        component={AddOutfit}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <View style={{ position: 'absolute', flex:1 , alignItems: 'center',justifyContent:'flex-end' , top: -40,  zIndex: 10 ,  padding:10 , width:70 , height:70 , backgroundColor: "#090909" ,borderRadius:"40%" }}>
-            <View style={{  flex:1 , alignItems: 'center',justifyContent:'center', width:50 , height:50 , backgroundColor:"#242424" , borderRadius:"50%", }}>
-              <Ionicons name="add-outline" color={color} size={size * 1.7} />
-            </View>
-            </View>
-          ),
-        }}
-      />
-    
-       <Tab.Screen
-        name="Categories"
-        component={AddOutfit}
-        options={{
-          tabBarIcon: ({color, size}) => (
-            <Ionicons name="shirt-outline" color={color} size={size} />
-          ),
-        }}
-      />
-       <Tab.Screen
-        name="Settings"
-        component={AddOutfit}
-        options={{
-          tabBarIcon: ({color, size}) => (
-            <Ionicons name="cog-outline" color={color} size={size} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
+      >
+        
+        <Tab.Screen
+          name="dashboard"
+          component={Dashboard}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="home-outline" color={color} size={size} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Calendar"
+          component={AddClothes}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="calendar-outline" color={color} size={size} />
+            ),
+          }}
+        />
+       
+        <Tab.Screen
+          name="AddTab"
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 10,
+                  padding: 10,
+                  width: 75,
+                  height: 75,
+                  top: -35,
+                  backgroundColor: "#090909",
+                  borderRadius: "40%",
+                }}
+                onPress={() => setShowDropdown(true)}
+              >
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 60,
+                    height: 60,
+                    backgroundColor: "#242424",
+                    borderRadius: "50%",
+                  }}
+                >
+                <Ionicons name="add-outline" color={color} size={size * 1.8} />
+                </View>
+              </TouchableOpacity>
+            ),
+          }}
+        >
+          {() => null}
+        </Tab.Screen>
+        <Tab.Screen
+          name="Categories"
+          component={UserCategory}
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <Ionicons name="shirt-outline" color={color} size={size} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Settings"
+          component={AddOutfit}
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <Ionicons name="cog-outline" color={color} size={size} />
+            ),
+          }}
+        />
+      </Tab.Navigator>
+    </View>
   );
-};
-
-const getTabBarVisibility = route => {
-  // console.log(route);
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
-  // console.log(routeName);
-
-  if( routeName == 'GameDetails' ) {
-    return 'none';
-  }
-  return 'flex';
 };
 
 export default TabNavigator;

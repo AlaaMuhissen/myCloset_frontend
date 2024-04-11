@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { categories } from '../assets/data/categories';
-import CategoryCard from './CategoryCard';
+import CategoryCard from './Cards/CategoryCard';
+import SubCategoryList from './SubCategoryList';
 import { FlatList } from 'react-native-gesture-handler';
 import { SIZES } from '../constants';
-import { useRouter } from "expo-router";
 import { useNavigation } from '@react-navigation/native';
+
 const ShowCategories = () => {
-    const navigation = useNavigation();
-    const [selectedCategory, setSelectedCategory] = useState();
-    const handleCardPress = (category) => {
-        console.log(category);
-        navigation.navigate('Category', { category });
-        setSelectedCategory(category);
-      };
+  const navigation = useNavigation();
+  const [selectedCategory, setSelectedCategory] = useState('Tops');
+  const handleCardPress = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const selectedCategoryData = categories.find((category) => category.label === selectedCategory);
+  
   return (
-   <>
+    <>
     <View style={styles.container}>
       <FlatList
         data={categories}
@@ -30,15 +32,19 @@ const ShowCategories = () => {
         keyExtractor={(item) => item.label}
         contentContainerStyle={{ columnGap: SIZES.medium }}
         horizontal
-       
       />
     </View>
-          </>
-    // <ScrollView contentContainerStyle={styles.container} horizontal={true}>
-    //   {categories.map((category, index) => (
-    //     <CategoryCard key={index} icon={category.icons} title={category.label} />
-    //   ))}
-    // </ScrollView>
+    <View>
+      {selectedCategoryData && (
+        <SubCategoryList subOptions={selectedCategoryData.subOptions} /> 
+      )}
+      </View>
+      {/* <View>
+      {selectedCategoryData && (
+        <SubCategoryList subOptions={selectedCategoryData.subOptions} /> 
+      )}
+      </View> */}
+    </>
   );
 };
 
@@ -47,7 +53,6 @@ const styles = StyleSheet.create({
     padding: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    // justifyContent: 'center',
   },
 });
 
