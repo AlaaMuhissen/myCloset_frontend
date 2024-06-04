@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, PanResponder } from 'react-native';
 
-const MovableAndResizableSquare = ({ item, size, position, onResize, onMove, onRemove }) => {
+const MovableAndResizableSquare = ({ item, size, position, onResize, onMove, onRemove, resetPosition }) => {
   const [currentSize, setCurrentSize] = useState(size);
   const [currentPosition, setCurrentPosition] = useState(position);
 
@@ -18,6 +18,7 @@ const MovableAndResizableSquare = ({ item, size, position, onResize, onMove, onR
       const newY = currentPosition.y + gestureState.dy;
       setCurrentPosition({ x: newX, y: newY });
       onMove(item.id, newX, newY);
+      resetPosition(item.id);
     },
   });
 

@@ -27,6 +27,7 @@ const AddOutfit = () => {
       [id]: { x: 0, y: 0 }
     }));
   }; 
+
   const handleCardPress = (category) => {
     setSelectedCategory(category);
   };
@@ -53,7 +54,9 @@ const AddOutfit = () => {
     };
     fetchData();
   }, [selectedCategory]);
+
   const selectedCategoryData = categories.find((category) => category.label === selectedCategory);
+
   const handleResize = (id, width, height) => {
     setSizes(prevSizes => ({
       ...prevSizes,
