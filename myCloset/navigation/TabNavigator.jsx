@@ -7,6 +7,8 @@ import Dashboard from '../screens/Dashboard';
 import AddClothes from '../screens/AddClothes';
 import AddOutfit from '../screens/AddOutfit';
 import UserCategory from '../screens/UserCategory';
+import SettingsScreen from '../screens/SettingsScreen';
+import { FontAwesome } from '@expo/vector-icons';
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
@@ -19,7 +21,7 @@ const TabNavigator = () => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 , backgroundColor: '#090909'}}>
       <Modal
         animationType="fade"
         transparent={true}
@@ -37,11 +39,11 @@ const TabNavigator = () => {
           tabBarShowLabel: false,
           tabBarStyle: {
             backgroundColor: '#363636',
-            borderTopColor: '#363636',
-            borderTopWidth: 1,
+            borderRadius:40
           },
           tabBarInactiveTintColor: '#fff',
           tabBarActiveTintColor: '#ffb845',
+          
         }}
       >
         
@@ -50,17 +52,19 @@ const TabNavigator = () => {
           component={Dashboard}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="home-outline" color={color} size={size} />
+              <Ionicons name="home" color={color} size={size} />
             ),
+            headerShown: false,
           }}
         />
-        <Tab.Screen
-          name="Calendar"
-          component={AddClothes}
+      <Tab.Screen
+          name="Categories"
+          component={UserCategory}
           options={{
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="calendar-outline" color={color} size={size} />
+            tabBarIcon: ({color, size}) => (
+              <Ionicons name="shirt" color={color} size={size} />
             ),
+            headerShown: false,
           }}
         />
        
@@ -79,7 +83,7 @@ const TabNavigator = () => {
                   height: 75,
                   top: -35,
                   backgroundColor: "#090909",
-                  borderRadius: "40%",
+                  borderRadius: 40,
                 }}
                 onPress={() => setShowDropdown(true)}
               >
@@ -90,33 +94,36 @@ const TabNavigator = () => {
                     width: 60,
                     height: 60,
                     backgroundColor: "#242424",
-                    borderRadius: "50%",
+                    borderRadius: 50
                   }}
                 >
                 <Ionicons name="add-outline" color={color} size={size * 1.8} />
                 </View>
               </TouchableOpacity>
             ),
+            headerShown: false,
           }}
         >
           {() => null}
         </Tab.Screen>
         <Tab.Screen
-          name="Categories"
-          component={UserCategory}
+          name="Calendar"
+          component={AddClothes}
           options={{
-            tabBarIcon: ({color, size}) => (
-              <Ionicons name="shirt-outline" color={color} size={size} />
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="bar-chart" color={color} size={size} />
             ),
           }}
         />
+        
         <Tab.Screen
           name="Settings"
-          component={AddOutfit}
+          component={SettingsScreen}
           options={{
             tabBarIcon: ({color, size}) => (
-              <Ionicons name="cog-outline" color={color} size={size} />
+              <Ionicons name="cog" color={color} size={size} />
             ),
+            
           }}
         />
       </Tab.Navigator>

@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 
 import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
+import { COLORS } from '../constants';
 
 
 
@@ -12,7 +13,7 @@ export default function SignupWithEmail() {
 
   return (
     <Pressable style={styles.button}>
-      <FontAwesome name="google" size={32} color="#704F38" style={styles.icon} />
+      <FontAwesome name="google" size={32} color={COLORS.secondary} style={styles.icon} />
     </Pressable>
   );
 }
@@ -27,7 +28,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonText: {
-    color: '#704F38',
+    color: COLORS.secondary,
     fontSize: 16,
     marginLeft: 10, // Add some space between icon and text
   },

@@ -28,7 +28,7 @@ const AddDropdown = ({ onSelect }) => {
           width: 70,
           height: 70,
           backgroundColor: "black",
-          borderRadius: "50%",
+          borderRadius: 50,
           top: -40
         }}
         onPress={() => onSelect(null)} // Close the dropdown when close button is pressed
