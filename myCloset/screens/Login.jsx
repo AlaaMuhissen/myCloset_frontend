@@ -3,7 +3,8 @@ import {Alert, View, TextInput, Button, Text ,StyleSheet , TouchableOpacity ,Key
 import {API_KEY , AUTH_DOMAIN , PROJECT_ID, STORAGE_BUCKET,MESSAGING_SENDER_ID ,APP_ID} from '@env'
 import { signInWithEmailAndPassword ,getAuth } from 'firebase/auth';
 import SignupWithEmail from './SignupWithEmail';
-const bgImg = require('../assets/images/clothes-background.png');
+import { COLORS } from '../constants';
+const bgImg = require('../assets/images/apparel-choosing-clothing-fashion.jpg');
 const auth = getAuth();
 const styles = StyleSheet.create({
     backgroundImage: {
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
       },
       formContainer: {
         // width: '90%',
-        backgroundColor: 'rgba(255, 255, 255, 0.2)', // Transparent white background
+        backgroundColor: 'rgba(128, 128, 128, 0.2)', // Transparent white background
         borderRadius: 20,
         paddingVertical: 70,
         paddingHorizontal: 40,
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
       },
       button: {
-        backgroundColor: '#704F38', // Button background color
+        backgroundColor: COLORS.secondary, // Button background color
         borderRadius: 10,
         paddingVertical: 10,
         alignItems: 'center',
@@ -53,13 +54,14 @@ const styles = StyleSheet.create({
         fontSize: 16,
       },
       signupText: {
-        color: 'white', // Signup text color
+        color: 'black', // Signup text color
         marginTop: 10,
         fontSize: 14,
         textAlign: 'center',
+        fontWeight: '600'
       },
       signupLink: {
-        color: 'white', // Signup link color
+        color: 'black', // Signup link color
         textDecorationLine: 'underline',
       },
   });

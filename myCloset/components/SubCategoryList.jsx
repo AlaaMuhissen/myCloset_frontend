@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 
-const SubCategoryList = ({ subOptions }) => {
+const SubCategoryList = ({ subOptions, handleSubCategory }) => {
   const [selectedSubCategory, setSelectedSubCategory] = useState(subOptions[0].label);
+
+  useEffect(() => {
+    handleSubCategory(selectedSubCategory);
+  }, [selectedSubCategory]);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => setSelectedSubCategory(item.label)}
+      onPress={() => {
+        setSelectedSubCategory(item.label);
+        handleSubCategory(item.label);
+      }}
       style={styles.btn(selectedSubCategory, item.label)}
     >
-      <Text style={{ color: "#fff" ,fontSize: 16 ,fontWeight:'bold'}}>{item.label}</Text>
+      <Text style={{ color: "#fff", fontSize: 16, fontWeight: 'bold' }}>{item.label}</Text>
     </TouchableOpacity>
   );
 
