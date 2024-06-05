@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { DraxView } from 'react-native-drax';
-import MovableAndResizableSquare from './MovableAndResizableSquare '
+import MovableAndResizableSquare from './MovableAndResizableSquare'
 import ViewShot from 'react-native-view-shot';
 
 const { height } = Dimensions.get('window');
