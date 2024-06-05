@@ -8,6 +8,8 @@ import CategoryList from '../components/CategotyList';
 import SubCategoryList from '../components/SubCategoryList';
 import ClothesGrid from '../components/ClothesGrid';
 import { categories } from '../assets/data/categories';
+import { uploadImage } from '../config/cloudinary';
+import ViewShot,{ captureRef } from 'react-native-view-shot';
 const { height } = Dimensions.get('window');
 
 const AddOutfit = () => {
@@ -18,7 +20,7 @@ const AddOutfit = () => {
   const [clothesData, setClothesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
-
+  const [captureMode, setCaptureMode] = useState(false);
   const receivingZoneRef = useRef();
 
   const resetPosition = (id) => {
@@ -26,7 +28,8 @@ const AddOutfit = () => {
       ...prevPositions,
       [id]: { x: 0, y: 0 }
     }));
-  }; 
+  };
+
   const handleCardPress = (category) => {
     setSelectedCategory(category);
   };
@@ -53,7 +56,9 @@ const AddOutfit = () => {
     };
     fetchData();
   }, [selectedCategory]);
+
   const selectedCategoryData = categories.find((category) => category.label === selectedCategory);
+
   const handleResize = (id, width, height) => {
     setSizes(prevSizes => ({
       ...prevSizes,
@@ -88,67 +93,70 @@ const AddOutfit = () => {
     setReceived([...received, newItem]);
   };
 
-  const saveState = async () => {
-    try {
-      const itemsId = received.map(item => item._id);
-      const colorPalette = Array.from(new Set(received.flatMap(item => item.colors)));
-      const state = {
-        itemsId,
-        colorPalette,
-        sizes,
-        positions,
-      };
-      const stateJson = JSON.stringify(state);
+  const captureAndUpload = async () => {
+    setCaptureMode(true); // Enable capture mode
+    setTimeout(async () => { // Allow some time for the UI to update
+      try {
+        const uri = await receivingZoneRef.current.capture();
+        const uploadResponse = await uploadImage(uri);
+        const imgUrl = uploadResponse.secure_url;
+        console.log('Image uploaded to Cloudinary:', imgUrl);
 
-      const response = await axios.post('https://mycloset-backend-hnmd.onrender.com/api/outfit/mohissen1234/Summer', stateJson, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-      console.log(response);
-      Alert.alert('Success', 'State saved successfully!');
-    } catch (error) {
-      console.error('Error saving state:', error);
-      Alert.alert('Error', 'Failed to save state');
-    }
+        const itemsId = received.map((item) => item._id);
+        const colorPalette = Array.from(new Set(received.flatMap((item) => item.colors)));
+        const state = {
+          itemsId,
+          colorPalette,
+          sizes,
+          positions,
+          imgUrl,
+        };
+        const stateJson = JSON.stringify(state);
+
+        const response = await axios.post(
+          'https://mycloset-backend-hnmd.onrender.com/api/outfit/mohissen1234/Summer',
+          stateJson,
+          { headers: { 'Content-Type': 'application/json' } }
+        );
+       
+        Alert.alert('Success', 'State saved with image successfully!');
+      } catch (error) {
+        console.error('Error capturing and uploading image:', error);
+        Alert.alert('Error', 'Failed to capture and upload image');
+      } finally {
+        setCaptureMode(false); // Disable capture mode
+      }
+    }, 100); // Delay to ensure the UI updates
   };
 
-  const loadState = async () => {
-    try {
-      const fileUri = FileSystem.documentDirectory + 'receivedZoneState.json';
-      const stateJson = await FileSystem.readAsStringAsync(fileUri);
-      const state = JSON.parse(stateJson);
-      setReceived(state.received);
-      setSizes(state.sizes);
-      setPositions(state.positions);
-      Alert.alert('Success', 'State loaded successfully!');
-      console.log(state);
-    } catch (error) {
-      console.error('Error loading state:', error);
-      Alert.alert('Error', 'Failed to load state');
-    }
-  };
 
   return (
     <DraxProvider>
       <View style={styles.container}>
         <View style={styles.receivingZoneContainer}>
+      
           <ReceivingZone
             ref={receivingZoneRef}
             received={received}
             sizes={sizes}
             positions={positions}
+            setPositions={setPositions}
             handleResize={handleResize}
             handleMove={handleMove}
             handleRemove={handleRemove}
             addNewItem={addNewItem}
             resetPosition={resetPosition}
+            captureMode={captureMode}
           />
+         
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.saveButton} onPress={saveState}>
-              <Text style={styles.saveButtonText}>Save State</Text>
+            <TouchableOpacity style={styles.saveButton} onPress={captureAndUpload}>
+              <Text style={styles.saveButtonText}>Capture & Upload</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.loadButton} onPress={loadState}>
+            {/* <TouchableOpacity style={styles.loadButton} onPress={loadState}>
               <Text style={styles.loadButtonText}>Load State</Text>
-            </TouchableOpacity>
+            
+            </TouchableOpacity> */}
           </View>
         </View>
         <View style={styles.scrollContainer}>
@@ -203,6 +211,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  captureButton: {
+    padding: 10,
+    backgroundColor: '#ffc107',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  captureButtonText: {
     color: '#fff',
     fontSize: 16,
   },

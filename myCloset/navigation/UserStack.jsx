@@ -9,6 +9,7 @@ import AddOutfit from '../screens/AddOutfit.jsx';
 import { SafeAreaView } from 'react-native';
 import SettingsScreen from '../screens/SettingsScreen.jsx';
 import TakePic from '../components/TakePic.jsx';
+import UserOutfits from '../screens/UserOutfits.jsx';
 
 const Stack = createStackNavigator();
 

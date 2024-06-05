@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, PanResponder } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, PanResponder, Dimensions } from 'react-native';
 
-const MovableAndResizableSquare = ({ item, size, position, onResize, onMove, onRemove }) => {
+const { width, height } = Dimensions.get('window');
+
+const MovableAndResizableSquare = ({ item, size, position, onResize, onMove, onRemove, captureMode }) => {
   const [currentSize, setCurrentSize] = useState(size);
   const [currentPosition, setCurrentPosition] = useState(position);
 
@@ -16,8 +18,12 @@ const MovableAndResizableSquare = ({ item, size, position, onResize, onMove, onR
     onPanResponderRelease: (e, gestureState) => {
       const newX = currentPosition.x + gestureState.dx;
       const newY = currentPosition.y + gestureState.dy;
-      setCurrentPosition({ x: newX, y: newY });
-      onMove(item.id, newX, newY);
+      if (newY < 0 || newY + currentSize.height > height * 0.5) {
+        console.log("exittt");
+        setCurrentPosition({ x: 50, y: 50 });
+      } else {
+        setCurrentPosition({ x: newX, y: newY });
+      }
     },
   });
 
@@ -47,13 +53,17 @@ const MovableAndResizableSquare = ({ item, size, position, onResize, onMove, onR
         ]}
       >
         <Image source={{ uri: item.imgUrl }} style={{ width: currentSize.width, height: currentSize.height }} />
-        <TouchableOpacity onPress={() => onRemove(item.id)} style={styles.removeButton}>
-          <Text>X</Text>
-        </TouchableOpacity>
-        <View
-          {...resizeResponder.panHandlers}
-          style={styles.resizeHandle}
-        />
+        {!captureMode && (
+          <>
+            <TouchableOpacity onPress={() => onRemove(item.id)} style={styles.removeButton}>
+              <Text>X</Text>
+            </TouchableOpacity>
+            <View
+              {...resizeResponder.panHandlers}
+              style={styles.resizeHandle}
+            />
+          </>
+        )}
       </View>
     </View>
   );
