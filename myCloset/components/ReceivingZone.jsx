@@ -3,12 +3,15 @@ import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { DraxView } from 'react-native-drax';
 import MovableAndResizableSquare from './MovableAndResizableSquare'
 import ViewShot from 'react-native-view-shot';
+import { centerPoint } from '@mgcrea/react-native-dnd';
+import { COLORS } from '../constants';
 
 const { height } = Dimensions.get('window');
 
 const ReceivingZone = forwardRef(({ received, sizes, positions, setPositions, handleResize, handleMove, handleRemove, addNewItem, resetPosition, captureMode }, ref) => {
   const [zoneLayout, setZoneLayout] = useState({ yStart: 0, yEnd: 0 });
-
+  
+  const [isThereAnImg ,setIsThereAnImg] = useState (false)
   useEffect(() => {
     const initialPos = {};
     received.forEach(item => {
@@ -25,7 +28,7 @@ const ReceivingZone = forwardRef(({ received, sizes, positions, setPositions, ha
   };
 
   return (
-    <View style={styles.draxContainer} onLayout={handleLayout}>
+    <View onLayout={handleLayout}>
         <View style={[styles.centeredContent, !captureMode && styles.receivingZone]}>
       <ViewShot ref={ref} style={[styles.centeredContent , captureMode &&styles.receivingZoneForScreenshot]} options={{ format: 'jpg', quality: 0.8 }}>
           <DraxView
@@ -39,9 +42,10 @@ const ReceivingZone = forwardRef(({ received, sizes, positions, setPositions, ha
             }}
             renderContent={() => (
               <>
-                <Text>Receiving Zone</Text>
+                { !isThereAnImg && <Text style = {styles.receiveZone}>Receiving Zone</Text>}
                 <View style={styles.receivedContainer}>
                   {received.map((item, index) => {
+                    setIsThereAnImg(true);
                     const size = sizes[item.id] || { width: 60, height: 60 };
                     const position = positions[item.id] || { x: 0, y: 0 };
                     return (
@@ -75,6 +79,11 @@ const ReceivingZone = forwardRef(({ received, sizes, positions, setPositions, ha
 const styles = StyleSheet.create({
   draxContainer: {
     marginTop: 20,
+  },
+  receiveZone:{
+    position : 'absolute',
+    color: COLORS.gray
+
   },
   centeredContent: {
     justifyContent: 'center',

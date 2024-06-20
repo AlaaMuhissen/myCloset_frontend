@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, PanResponder, Dimensions } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
 const MovableAndResizableSquare = ({ item, size, position, onResize, onMove, onRemove, captureMode }) => {
+
+  // console.log("=====item== " , item)
+  console.log("=====size== " , size)
+  console.log("=====position== " , position)
   const [currentSize, setCurrentSize] = useState(size);
   const [currentPosition, setCurrentPosition] = useState(position);
+  useEffect(() => {
+    setCurrentSize(size);
+}, [size]);
 
+useEffect(() => {
+    setCurrentPosition(position);
+}, [position]);
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (e, gestureState) => {

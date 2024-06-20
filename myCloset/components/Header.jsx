@@ -13,7 +13,7 @@ export default function Header({ name, icon }) {
     <View style={styles.headerContainer}>
       <View style={styles.textContainer}>
         <Text style={styles.greetingText}>
-          Hi {name}
+          {name}
         </Text>
         <Ionicons name={icon} color={'#fff'} size={28} />
       </View>
@@ -22,8 +22,14 @@ export default function Header({ name, icon }) {
 }
 const styles = StyleSheet.create({
   headerContainer: {
-    flex:1,
-    paddingHorizontal:4,
+    // flex:1,
+    paddingHorizontal:10,
+    paddingVertical :20,
+    // borderWidth: 2,
+    // borderColor: "#fff"
+    // borderWidth: "1px",
+    // borderColor: "#fff"
+
     // flexDirection: 'row',
     // justifyContent: 'space-between',
     // alignItems: 'center'

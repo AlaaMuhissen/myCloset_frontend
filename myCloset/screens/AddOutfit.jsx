@@ -9,7 +9,8 @@ import SubCategoryList from '../components/SubCategoryList';
 import ClothesGrid from '../components/ClothesGrid';
 import { categories } from '../assets/data/categories';
 import { uploadImage } from '../config/cloudinary';
-import ViewShot,{ captureRef } from 'react-native-view-shot';
+import { COLORS } from '../constants';
+import Header from '../components/Header';
 const { height } = Dimensions.get('window');
 
 const AddOutfit = () => {
@@ -47,7 +48,7 @@ const AddOutfit = () => {
       try {
         setLoading(true);
         const response = await axios.get('https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234');
-        setClothesData(response.data);
+        setClothesData(new Map(Object.entries(response.data.categories)));
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -89,6 +90,8 @@ const AddOutfit = () => {
     const newItem = {
       id: `${item._id}`,
       ...item,
+      category: selectedCategory,
+      subCategory: selectedSubCategory,
     };
     setReceived([...received, newItem]);
   };
@@ -97,28 +100,37 @@ const AddOutfit = () => {
     setCaptureMode(true); // Enable capture mode
     setTimeout(async () => { // Allow some time for the UI to update
       try {
+        
         const uri = await receivingZoneRef.current.capture();
+      
         const uploadResponse = await uploadImage(uri);
         const imgUrl = uploadResponse.secure_url;
-        console.log('Image uploaded to Cloudinary:', imgUrl);
-
+       
         const itemsId = received.map((item) => item._id);
         const colorPalette = Array.from(new Set(received.flatMap((item) => item.colors)));
+        const itemsSource = received.reduce((acc, item) => {
+          acc[item._id] = {
+            category: item.category,
+            subCategory: item.subCategory
+          };
+          return acc;
+        }, {});
+        
         const state = {
           itemsId,
           colorPalette,
           sizes,
           positions,
-          imgUrl,
+          itemsSource,
+          imgUrl    
         };
-        const stateJson = JSON.stringify(state);
 
         const response = await axios.post(
           'https://mycloset-backend-hnmd.onrender.com/api/outfit/mohissen1234/Summer',
-          stateJson,
+          state,
           { headers: { 'Content-Type': 'application/json' } }
         );
-       
+
         Alert.alert('Success', 'State saved with image successfully!');
       } catch (error) {
         console.error('Error capturing and uploading image:', error);
@@ -129,12 +141,14 @@ const AddOutfit = () => {
     }, 100); // Delay to ensure the UI updates
   };
 
-
   return (
+    <View style={styles.container}> 
+    
+        <Header name={"Make your magic!"} icon={'save'}/>
+     
     <DraxProvider>
-      <View style={styles.container}>
+      <View>
         <View style={styles.receivingZoneContainer}>
-      
           <ReceivingZone
             ref={receivingZoneRef}
             received={received}
@@ -148,21 +162,16 @@ const AddOutfit = () => {
             resetPosition={resetPosition}
             captureMode={captureMode}
           />
-         
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.saveButton} onPress={captureAndUpload}>
               <Text style={styles.saveButtonText}>Capture & Upload</Text>
             </TouchableOpacity>
-            {/* <TouchableOpacity style={styles.loadButton} onPress={loadState}>
-              <Text style={styles.loadButtonText}>Load State</Text>
-            
-            </TouchableOpacity> */}
           </View>
         </View>
         <View style={styles.scrollContainer}>
-          <CategoryList selectedCategory={selectedCategory} handleCardPress={handleCardPress} />
+          <CategoryList selectedCategory={selectedCategory} handleCardPress={handleCardPress} withIcon= {false} />
           {selectedCategoryData && (
-            <SubCategoryList subOptions={selectedCategoryData.subOptions} handleSubCategory={handleSubCategory} />
+            <SubCategoryList subOptions={selectedCategoryData.subOptions} handleSubCategory={handleSubCategory} isSmall= {true}/>
           )}
           <ScrollView>
             <ClothesGrid
@@ -176,18 +185,28 @@ const AddOutfit = () => {
         </View>
       </View>
     </DraxProvider>
+     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal : 10,
+    backgroundColor: COLORS.background
   },
   receivingZoneContainer: {
-    height: height * 0.5,
+    // height: height * 0.4,
+    // borderWidth: 10,
+    // borderColor: "#fff"
   },
   scrollContainer: {
-    height: height * 0.5,
+    // height: height * 0.4,
+    width: "100%",
+    // borderWidth:2,
+    // borderColor: "#fff",
+
+    
   },
   buttonContainer: {
     flexDirection: 'row',

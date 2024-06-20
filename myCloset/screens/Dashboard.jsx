@@ -12,6 +12,7 @@ import SearchBar from '../components/SearchBar';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AIOutfitSuggestions from '../components/AIOutfitSuggestions';
 import AIOutfitCards from '../components/Cards/AIOutfitCards';
+import { COLORS } from '../constants';
 
 const auth = getAuth();
 const Dashboard = () => {
@@ -21,8 +22,8 @@ const Dashboard = () => {
    <> 
      
      <ScrollView style= {styles.container}>
+      <Header name={"Hi Fashionista"} icon={'calendar'}/>
       <View style = {  {marginVertical:30 ,marginHorizontal: 15 ,gap :20}}>
-      <Header name={"Fashionista"} icon={'calendar'}/>
       <InfoCard />
       <SearchBar />
 
@@ -54,7 +55,7 @@ const Dashboard = () => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#090909',
+      backgroundColor: COLORS.background,
       gap : 20,
     },
     button: {
