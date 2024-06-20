@@ -4,7 +4,7 @@ import axios from 'axios';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
-const UserOutfits = () => {
+const ShowOutfits = () => {
   const [outfits, setOutfits] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState('Summer');
   const [loading, setLoading] = useState(true);
@@ -15,8 +15,9 @@ const UserOutfits = () => {
       try {
         setLoading(true);
         const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/outfit/mohissen1234/${selectedSeason}`);
-        console.log(response.data)
+      //  console.log(response.data)
         if (response.data) {
+            // console.log(response.data)
           const fetchedOutfits = Object.values(response.data).flat();
           setOutfits(fetchedOutfits);
         } else {
@@ -30,11 +31,12 @@ const UserOutfits = () => {
       }
     };
     fetchOutfits();
-    console.log(outfits)
+    // console.log("outfit: " ,outfits)
   }, [selectedSeason]);
 
-  const handleEditOutfit = (outfitId) => {
-    navigation.navigate('EditOutfit', { season: selectedSeason, outfitId });
+  const handleEditOutfit = (outfit) => {
+    console.log(outfit)
+    navigation.navigate('EditOutfit', { season: selectedSeason, outfit });
   };
 
   return (
@@ -47,13 +49,11 @@ const UserOutfits = () => {
           outfits.length > 0 ? (
             outfits.map((outfit, index) => (
               <View key={index} style={styles.outfitContainer}>
-                <TouchableOpacity style={styles.editIcon} onPress={() => handleEditOutfit(outfit._id)}>
+                <TouchableOpacity style={styles.editIcon} onPress={() => handleEditOutfit(outfit)}>
                   <FontAwesome name="edit" size={24} color="black" />
-                </TouchableOpacity>
-                {outfit.itemsId.map((itemId, idx) => {
-                  const item = outfit.itemsId.find((i) => i === itemId); // Assuming you have a way to get the item details by itemId
-                  return item ? <Image key={idx} source={{ uri: item.imgUrl }} style={styles.outfitImage} /> : null;
-                })}
+                </TouchableOpacity> 
+                <Image key={index} source={{ uri: outfit.imgUrl }} style={styles.outfitImage} />
+                
               </View>
             ))
           ) : (
@@ -61,6 +61,7 @@ const UserOutfits = () => {
           )
         )}
       </View>
+
     </ScrollView>
   );
 };
@@ -79,6 +80,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginVertical: 10,
     position: 'relative',
+    backgroundColor :"#ccc"
   },
   editIcon: {
     position: 'absolute',
@@ -97,4 +99,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserOutfits;
+export default ShowOutfits;

@@ -3,7 +3,7 @@ export const categories = [
       label: 'Tops',
       icons: "tshirt",
       subOptions: [
-        { label: 'T-Shirts' ,icons: 'tshirt'},
+        { label: 'T_Shirts' ,icons: 'tshirt'},
         { label: 'Hoodies' ,icons: 'tshirt'},
         { label: 'Blouses' ,icons: 'tshirt'},
         { label: 'Shirts' ,icons: 'tshirt'},
@@ -34,27 +34,27 @@ export const categories = [
       label: 'Shoes',
       icons: 'tshirt',
       subOptions: [
-        { label: 'Casual Shoes' ,icons: 'tshirt'},
-        { label: 'Formal Shoes',icons: 'tshirt' },
+        { label: 'Casual_Shoes' ,icons: 'tshirt'},
+        { label: 'Formal_Shoes',icons: 'tshirt' },
         { label: 'Boots' ,icons: 'tshirt'},
-        { label: 'Sandals and Flip-Flops',icons: 'tshirt' },
-        { label: 'Dress Shoes' ,icons: 'tshirt'},
+        { label: 'Sandals_and_Flip-Flops',icons: 'tshirt' },
+        { label: 'Dress_Shoes' ,icons: 'tshirt'},
       ]
     },
     {
       label: 'Bags',
       icons: "tshirt",
       subOptions: [
-        { label: 'Shoulder Bag' ,icons: 'tshirt'},
-        { label: 'Crossbody Bag' ,icons: 'tshirt'},
+        { label: 'Shoulder_Bag' ,icons: 'tshirt'},
+        { label: 'Crossbody_Bag' ,icons: 'tshirt'},
         { label: 'Backpack' ,icons: 'tshirt'},
         { label: 'Wallet' ,icons: 'tshirt'},
-        { label: 'Beach Bag' ,icons: 'tshirt'},
-        { label: 'Laptop Bag' ,icons: 'tshirt'}
+        { label: 'Beach_Bag' ,icons: 'tshirt'},
+        { label: 'Laptop_Bag' ,icons: 'tshirt'}
       ]
     },
     {
-      label: 'Head wear',
+      label: 'Head_wear',
       icons: 'tshirt',
       subOptions: [
         { label: 'Hats',icons: 'tshirt' },
@@ -72,7 +72,7 @@ export const categories = [
       ]
     },
     {
-      label: 'Other items',
+      label: 'Other_items',
       icons: 'tshirt',
       subOptions: [
         { label: 'others' ,data: []}

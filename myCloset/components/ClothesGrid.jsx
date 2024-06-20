@@ -3,7 +3,8 @@ import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Image as CachedImage } from 'react-native-expo-image-cache';
 
 const ClothesGrid = ({ clothesData, selectedCategory, selectedSubCategory, handleImagePress, loading }) => {
-  const selectedCategoryData = clothesData?.categories?.[selectedCategory]?.[selectedSubCategory];
+
+  const selectedCategoryData = (clothesData.length !== 0 ) && clothesData.get(selectedCategory)[selectedSubCategory];
 
   return (
     <View>
@@ -12,7 +13,7 @@ const ClothesGrid = ({ clothesData, selectedCategory, selectedSubCategory, handl
       ) : (
         selectedCategoryData && (
           <View style={styles.gridContainer}>
-            {selectedCategoryData.map((item, index) => (
+            {Object.values(selectedCategoryData).map((item, index) => (
               <TouchableOpacity key={index} style={styles.imageContainer} onPress={() => handleImagePress(item)}>
                 <CachedImage style={styles.clothesImage} uri={item.imgUrl} resizeMode="contain" />
               </TouchableOpacity>

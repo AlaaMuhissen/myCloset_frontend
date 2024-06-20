@@ -3,27 +3,27 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { getIconComponent } from '../Logics/getIconComponent';
 import { COLORS, FONT, SIZES, SHADOWS } from '../../constants';
 
-const CategoryCard = ({ icon, title, selectedCategory, handleCardPress }) => {
+const CategoryCard = ({ icon, title, selectedCategory, handleCardPress ,withIcon}) => {
   const iconColor = selectedCategory === title ? COLORS.tertiary : COLORS.primary;
   const IconComponent = getIconComponent(icon, 24, iconColor);
 
   return (
     <TouchableOpacity
-      style={styles.container(selectedCategory, title)}
+      style={styles.container(withIcon, selectedCategory, title)}
       onPress={() => handleCardPress(title)}
     >
-      <View style={styles.logoContainer(selectedCategory, title)}>
+    { withIcon && <View style={styles.logoContainer(selectedCategory, title)}>
         {IconComponent}
-      </View>
-      <Text style={styles.companyName(selectedCategory, title)}>{title}</Text>
+      </View>}
+      <Text style={styles.categoryName(withIcon,selectedCategory, title)}>{title}</Text>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  container: (selectedCategory, title) => ({
-    width: 100,
-    height: 100,
+  container: (withIcon, selectedCategory, title) => ({
+    width: withIcon ? 100 : 80,
+    height: withIcon ? 100 : 50,
     backgroundColor: selectedCategory === title ? COLORS.primary : COLORS.white,
     borderRadius: SIZES.medium,
     justifyContent: 'space-evenly',
@@ -42,8 +42,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
    
   }),
-  companyName: (selectedCategory, title) => ({
-    fontSize: SIZES.medium,
+  categoryName: (withIcon,selectedCategory, title) => ({
+    fontSize: withIcon?SIZES.medium: SIZES.small,
     fontFamily: FONT.bold,
     color: selectedCategory === title ? COLORS.white : COLORS.lightGray,
   }),

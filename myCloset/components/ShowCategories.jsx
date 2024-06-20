@@ -12,12 +12,20 @@ const ShowCategories = () => {
   const [selectedCategory, setSelectedCategory] = useState('Tops');
   const [clothesData, setClothesData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedSubCategory, setSelectedSubCategory] = useState('');
+  const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
   const handleCardPress = (category) => {
     setSelectedCategory(category);
+    if(category === "Tops") {setSelectedSubCategory("T_Shirts");}
+    if(category === "Bottoms") {setSelectedSubCategory("Jeans");}
+    if(category === "Outwear") {setSelectedSubCategory("Jackets");}
+    if(category === "Shoes") {setSelectedSubCategory("Casual_Shoes");}
+    if(category === "Bags") {setSelectedSubCategory("Shoulder_Bag");}
+    if(category === "Head_wear") {setSelectedSubCategory("Hats");}
+    if(category === "Jewelry") {setSelectedSubCategory("Necklaces");}
+    if(category === "Other_items") {setSelectedSubCategory("others");}
   };
 
   const handleSubCategory = (subCategory) => {
@@ -34,7 +42,7 @@ const ShowCategories = () => {
       try {
         setLoading(true);
         const response = await axios.get('https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234'); 
-        setClothesData(response.data);
+        setClothesData(new Map(Object.entries(response.data.categories)));
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -88,6 +96,7 @@ const ShowCategories = () => {
               title={item.label}
               selectedCategory={selectedCategory}
               handleCardPress={handleCardPress}
+              withIcon= {true}
             />
           )}
           keyExtractor={(item) => item.label}
@@ -97,7 +106,7 @@ const ShowCategories = () => {
       </View>
       <View>
         {selectedCategoryData && (
-          <SubCategoryList subOptions={selectedCategoryData.subOptions} handleSubCategory={handleSubCategory} /> 
+          <SubCategoryList subOptions={selectedCategoryData.subOptions} handleSubCategory={handleSubCategory} isSmall= {false} /> 
         )}
       </View>
       <View>
@@ -107,7 +116,7 @@ const ShowCategories = () => {
           selectedCategoryData && clothesData.length !== 0 && selectedSubCategory && (
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
             <View style={styles.gridContainer}>
-              {clothesData.categories[selectedCategory]?.[selectedSubCategory]?.map((item, index) => (
+              {(clothesData.length!== 0) && Object.values(clothesData.get(selectedCategory)[selectedSubCategory])?.map((item, index) => (
                 <TouchableOpacity key={index} style={styles.imageContainer} onPress={() => handleImagePress(item)}>
                   <CachedImage
                     style={styles.image}

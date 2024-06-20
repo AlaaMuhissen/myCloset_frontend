@@ -9,6 +9,7 @@ import AddOutfit from '../screens/AddOutfit';
 import UserCategory from '../screens/UserCategory';
 import SettingsScreen from '../screens/SettingsScreen';
 import { FontAwesome } from '@expo/vector-icons';
+import ShowOutfits from '../screens/ShowOutfits';
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
@@ -108,7 +109,7 @@ const TabNavigator = () => {
         </Tab.Screen>
         <Tab.Screen
           name="Calendar"
-          component={AddClothes}
+          component={ShowOutfits}
           options={{
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="bar-chart" color={color} size={size} />

@@ -1,17 +1,16 @@
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
-import {CLOUD_NAME, API_KEY_CLOUDINARY, API_SECRET} from '@env';
+import { CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET } from '@env';
 
-export const uploadImage = async (fileUri ) => {
-    console.log(fileUri)
-    
+export const uploadImage = async (fileUri) => {
   const formData = new FormData();
   formData.append('file', {
     uri: fileUri,
     type: 'image/jpeg', // or the type of image you're uploading
-    name: `outfit.jpg`, // the name of the file
+    name: `${uuidv4()}.jpg`, // generate a unique name for the file
   });
-  console.log(formData)
-  formData.append('upload_preset', 'd1pqzadi'); // replace with your upload preset
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET); // replace with your upload preset
 
   try {
     const response = await axios.post(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, formData, {
