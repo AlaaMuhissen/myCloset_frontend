@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, ScrollView ,Dimensions } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { Picker } from '@react-native-picker/picker';
-import { categories } from '../../assets/data/categories'; 
-import ColorPickerModal from './ColorPickerModal';
+import { categories } from '../../assets/data/categories';
+import { fabrics } from '../../assets/data/fabrics';
 import Collapsible from 'react-native-collapsible';
-
+import ColorPickerModal from './ColorPickerModal'
 const seasons = ['Spring', 'Summer', 'Autumn', 'Winter'];
-
+const { width, height } = Dimensions.get('window');
+const popularTags = ['#Casual', '#Formal', '#Business', '#Party', '#Sports', '#Wedding', '#Vacation', '#Beach', '#Date_Night', '#Festive'];
 const EditClothingDetailsModal = ({
   visible,
   result,
-  selectedLabel,
-  setSelectedLabel,
   colorPalette,
   setColorPalette,
   selectedSeasons,
@@ -26,21 +25,44 @@ const EditClothingDetailsModal = ({
   setSelectedCategory,
   selectedSubCategory,
   setSelectedSubCategory,
-  
+  selectedFabric,
+  setSelectedFabric,
+  handleTagToggle,
+  selectedTags
 }) => {
   const [colorPickerVisible, setColorPickerVisible] = useState(false);
   const [isCategoryCollapsed, setCategoryCollapsed] = useState(true);
   const [isColorCollapsed, setColorCollapsed] = useState(true);
   const [isSeasonCollapsed, setSeasonCollapsed] = useState(true);
+  const [isFabricCollapsed, setFabricCollapsed] = useState(true);
+  const [fabricPreviewVisible, setFabricPreviewVisible] = useState(false);
+const [previewFabric, setPreviewFabric] = useState(null);
+const [isTagsCollapsed, setTagsCollapsed] = useState(true);
+
+const handleLongPress = (fabric) => {
+  setPreviewFabric(fabric);
+  setFabricPreviewVisible(true);
+};
+
+const formatNames = (name) => {
+  
+  if (name?.includes('_')) {
+    return name.replace(/_/g, ' ');
+  }
+  return name;
+};
+
+
 
   useEffect(() => {
     const category = categories.find(cat =>
-      cat.subOptions.some(sub => sub.label === selectedLabel)
+      cat.subOptions.some(sub => sub.label === selectedSubCategory)
     );
+
     if (category) {
       setSelectedCategory(category.label);
     }
-  }, [selectedLabel]);
+  }, [selectedSubCategory]);
 
   const handleCategoryChange = (categoryLabel) => {
     setSelectedCategory(categoryLabel);
@@ -83,13 +105,13 @@ const EditClothingDetailsModal = ({
 
             <TouchableOpacity onPress={() => setCategoryCollapsed(!isCategoryCollapsed)} style={styles.header}>
               <View style={styles.collapsibleContainer}>
-            <Text style={styles.headerText}>Category </Text>
-            <Text style={styles.headerSelected}>
-              {isCategoryCollapsed 
-                ? `${selectedCategory || 'Select Category'} / ${selectedSubCategory || 'Select Subcategory'}` 
-                : ''}
-            </Text>
-            </View>
+                <Text style={styles.headerText}>Category </Text>
+                <Text style={styles.headerSelected}>
+                  {isCategoryCollapsed
+                    ? `${formatNames(selectedCategory) || 'Select Category'} / ${formatNames(selectedSubCategory) || 'Select Subcategory'}`
+                    : ''}
+                </Text>
+              </View>
             </TouchableOpacity>
             <Collapsible collapsed={isCategoryCollapsed}>
               <View style={styles.pickerContainer}>
@@ -100,7 +122,7 @@ const EditClothingDetailsModal = ({
                   itemStyle={styles.pickerItem}
                 >
                   {categories.map(category => (
-                    <Picker.Item key={category.label} label={category.label} value={category.label} />
+                    <Picker.Item key={category.label} label={formatNames(category.label)} value={category.label} />
                   ))}
                 </Picker>
                 <Picker
@@ -110,22 +132,22 @@ const EditClothingDetailsModal = ({
                   itemStyle={styles.pickerItem}
                 >
                   {selectedCategory && categories.find(cat => cat.label === selectedCategory).subOptions.map(subOption => (
-                    <Picker.Item key={subOption.label} label={subOption.label} value={subOption.label} />
+                    <Picker.Item key={subOption.label} label={formatNames(subOption.label)} value={subOption.label} />
                   ))}
                 </Picker>
               </View>
             </Collapsible>
 
             <TouchableOpacity onPress={() => setColorCollapsed(!isColorCollapsed)} style={styles.header}>
-              <View style= {styles.collapsibleContainer}>
-              <Text style={styles.headerText}>Colors</Text>
-              {isColorCollapsed && (
-                <View style={styles.headerColors}>
-                  {colorPalette.map((color, index) => (
-                    <View key={index} style={[styles.headerColorSquare, { backgroundColor: color }]} />
-                  ))}
-                </View>
-              )}
+              <View style={styles.collapsibleContainer}>
+                <Text style={styles.headerText}>Colors</Text>
+                {isColorCollapsed && (
+                  <View style={styles.headerColors}>
+                    {colorPalette.map((color, index) => (
+                      <View key={index} style={[styles.headerColorSquare, { backgroundColor: color }]} />
+                    ))}
+                  </View>
+                )}
               </View>
             </TouchableOpacity>
             <Collapsible collapsed={isColorCollapsed}>
@@ -143,15 +165,16 @@ const EditClothingDetailsModal = ({
               </View>
             </Collapsible>
 
-
             <TouchableOpacity onPress={() => setSeasonCollapsed(!isSeasonCollapsed)} style={styles.headerSeason}>
-              <View style= {styles.collapsibleContainer}>
+              <View style={styles.collapsibleContainer}>
               <Text style={styles.headerTextSeason}>Seasons</Text>
-              {isSeasonCollapsed && (
-                <Text style={styles.headerSelected}>
-                  {seasons.filter(season => selectedSeasons[season]).join(', ')}
-                </Text>
-              )}
+                {isSeasonCollapsed && (
+                  <Text style={styles.headerSelected}>
+                    {selectedSeasons.map((value, index) => value === 0 ? seasons[index] : null).filter(Boolean).join(', ')}
+                  </Text>
+                )}
+
+    
               </View>
             </TouchableOpacity>
             <Collapsible collapsed={isSeasonCollapsed}>
@@ -163,11 +186,11 @@ const EditClothingDetailsModal = ({
                   />
                   <Text style={{ fontSize: 12, margin: 5 }}>All Seasons</Text>
                 </View>
-                {seasons.map(season => (
+                            {seasons.map((season, index) => (
                   <View key={season} style={styles.checkboxRow}>
                     <Checkbox
-                      value={!!selectedSeasons[season]}
-                      onValueChange={() => handleSeasonChange(season)}
+                      value={selectedSeasons[index] === 0}
+                      onValueChange={() => handleSeasonChange(index)}
                     />
                     <Text style={{ fontSize: 12, margin: 10 }}>{season}</Text>
                   </View>
@@ -175,6 +198,84 @@ const EditClothingDetailsModal = ({
               </View>
             </Collapsible>
 
+            <TouchableOpacity onPress={() => setFabricCollapsed(!isFabricCollapsed)} style={styles.header}>
+              <View style={styles.collapsibleContainer}>
+                <Text style={styles.headerText}>Fabric</Text>
+                <Text style={styles.headerSelected}>{isFabricCollapsed ? selectedFabric : ''}</Text>
+              </View>
+            </TouchableOpacity>
+            <Collapsible collapsed={isFabricCollapsed}>
+              <View style={styles.fabricsContainer}>
+                {fabrics.map(fabric => (
+                  <TouchableOpacity
+              key={fabric.fabricName}
+              style={[
+                styles.fabricItem,
+                selectedFabric === fabric.fabricName && styles.selectedFabric
+              ]}
+              onPress={() => setSelectedFabric(fabric.fabricName)}
+              onLongPress={() => handleLongPress(fabric)}
+            >
+              <Image source={fabric.fabricImg} style={styles.fabricImage} />
+              <Text style={styles.fabricName}>{formatNames(fabric.fabricName)}</Text>
+            </TouchableOpacity>
+
+              
+                ))}
+              </View>
+            </Collapsible>
+            {previewFabric && (
+              <Modal
+                animationType="fade"
+                transparent={true}
+                visible={fabricPreviewVisible}
+                onRequestClose={() => setFabricPreviewVisible(false)}
+              >
+                <View style={styles.previewContainer}>
+                  <View>
+                  <Image source={previewFabric.fabricImg} style={styles.previewImage} />
+                  <TouchableOpacity
+                    style={styles.previewCloseButton}
+                    onPress={() => setFabricPreviewVisible(false)}
+                  >
+                    <View style = {{flex :1 , justifyContent : 'center' , alignItems: 'center'  ,position: 'absolute', top: 0 }}>
+
+                    <Text style={styles.previewCloseText}>×</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <Text style={styles.previewText}>{previewFabric.fabricName}</Text>
+                  </View>
+                </View>
+              </Modal>
+            )}
+            <TouchableOpacity onPress={() => setTagsCollapsed(!isTagsCollapsed)} style={styles.header}>
+              <View style={styles.collapsibleContainer}>
+                <Text style={styles.headerText}>Occasions</Text>
+                {isTagsCollapsed && (
+                  <View style= { { maxWidth : width * 0.5}}>
+                  <Text style={styles.headerSelected}>
+                    {selectedTags.join(', ')}
+                  </Text>
+                  </View>
+                )}
+              </View>
+            </TouchableOpacity>
+            <Collapsible collapsed={isTagsCollapsed}>
+              <View style={styles.tagsContainer}>
+                {popularTags.map(tag => (
+                  <TouchableOpacity
+                    key={tag} 
+                    style={[
+                      styles.tagItem,
+                      selectedTags.includes(tag) && styles.selectedTag
+                    ]}
+                    onPress={() => handleTagToggle(tag)}
+                  >
+                    <Text style={styles.tagText}>{formatNames(tag)}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </Collapsible>
             <ColorPickerModal
               visible={colorPickerVisible}
               handleAddColor={handleAddColor}
@@ -240,6 +341,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     width: '100%',
     marginTop: 10,
+    borderRadius : 10
   },
   headerText: {
     fontSize: 16,
@@ -260,12 +362,14 @@ const styles = StyleSheet.create({
   },
   colorContainer: {
     flexDirection: 'row',
+    flexWrap : 'wrap',
     marginVertical: 10,
   },
   colorSquare: {
     width: 30,
     height: 30,
     margin: 5,
+    borderRadius: 5
   },
   addColorSquare: {
     width: 30,
@@ -306,13 +410,16 @@ const styles = StyleSheet.create({
   },
   headerColors: {
     flexDirection: 'row',
-    marginLeft: 10,
+    flexWrap : 'wrap',
+    maxWidth : width * 0.5,
   },
   headerColorSquare: {
     width: 15,
     height: 15,
     marginHorizontal: 2,
     borderRadius: 3,
+    margin: 3
+
   },
   headerSeason: {
     padding: 10,
@@ -322,21 +429,118 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    borderRadius :10
   },
   headerTextSeason: {
     fontSize: 16,
     fontWeight: 'bold',
   },
-  headerSelected :{
+  headerSelected: {
     fontSize: 11,
-    color: '#ccc'
+    color: '#ccc',
+    maxWidth : width * 0.4,
   },
-  collapsibleContainer : {
-    flex : 1,
-    flexDirection :'row',
-    justifyContent :'space-between',
-    alignContent : 'center'
-  }
+  collapsibleContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'center'
+  },
+  fabricsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    // justifyContent: 'center',
+    marginVertical: 10,
+  },
+  fabricItem: {
+    alignItems: 'center',
+    margin: 10,
+  },
+  selectedFabric: {
+    borderColor: '#2196F3',
+    borderWidth: 2,
+    borderRadius: 5,
+  },
+  fabricImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 5,
+  },
+  fabricName: {
+    marginTop: 5,
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  previewContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  },
+  previewImage: {
+    width: 300,
+    height: 300,
+    marginBottom: 20,
+    borderRadius: 10,
+  },
+  previewCloseButton: {
+    position: 'absolute',
+    top : -10,
+    right: -5,
+    backgroundColor: '#111',
+    width: 35,
+    height: 35,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  previewCloseText: {
+    fontSize: 25,
+    color: '#fff',
+    
+  },
+  previewText: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+  },
+    tagsContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      // justifyContent: 'space-around',
+      width :'100%' ,
+      marginVertical: 10,
+    },
+    tagItem: {
+      padding: 10,
+      margin: 5,
+      borderRadius: 20,
+      backgroundColor: '#ddd',
+    },
+    selectedTag: {
+      backgroundColor: '#2196F3',
+    },
+    tagText: {
+      color: '#fff',
+    },
+    headerText: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginRight :10
+    },
+    headerSelected: {
+      fontSize: 12,
+      color: '#777',
+    },
+    collapsibleContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      
+    },
+ 
 });
 
 export default EditClothingDetailsModal;

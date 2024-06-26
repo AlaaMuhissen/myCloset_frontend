@@ -12,6 +12,7 @@ import TakePic from '../components/TakePic.jsx';
 
 import EditOutfit from '../screens/EditOutfit.jsx';
 import ShowOutfits from '../screens/ShowOutfits.jsx';
+import UserCategory from '../screens/UserCategory.jsx';
 
 const Stack = createStackNavigator();
 
@@ -22,13 +23,14 @@ export default function UserStack() {
     <NavigationContainer>
       <Stack.Navigator>
         {/* <Stack.Screen name="Home" component={Dashboard} /> */}
-        <Stack.Screen name="tab" options={{ headerShown: false,}} component={TabNavigator} />
-        <Stack.Screen name="AddClothes" component={AddClothes} />
-        <Stack.Screen name="AddOutfit" options={{ headerShown: false,}} component={AddOutfit} />
+        <Stack.Screen name="tab" options={{ headerShown: false}} component={TabNavigator} />
+        <Stack.Screen name="AddClothes" options={{ headerShown: false}} component={AddClothes} />
+        <Stack.Screen name="userCategory" options={{ headerShown: false}} component={UserCategory} />
+        <Stack.Screen name="AddOutfit" options={{ headerShown: false}} component={AddOutfit} />
         <Stack.Screen name="Category" component={Category} />
         <Stack.Screen name="Settings" options={{ headerShown: true }} component={SettingsScreen} />
-        <Stack.Screen name="ShowOutfits" component={ShowOutfits} options={{ title: 'User Outfits' }} />
-        <Stack.Screen name="EditOutfit" component={EditOutfit} options={{ title: 'Edit Outfit' }} />
+        <Stack.Screen name="ShowOutfits" options={{ headerShown: false}} component={ShowOutfits}  />
+        <Stack.Screen name="EditOutfit" component={EditOutfit} options={{ headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
     </SafeAreaView>
