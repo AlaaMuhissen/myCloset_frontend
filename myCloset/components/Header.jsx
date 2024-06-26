@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { getAuth, signOut }from 'firebase/auth'
+import { getAuth, signOut } from 'firebase/auth';
 import { useAuthentication } from '../utils/hooks/useAuthentication';
 
 const auth = getAuth();
 
-export default function Header({ name, icon }) {
-    const { user } = useAuthentication();
+export default function Header({ name, icon, onIconPress }) {
+  const { user } = useAuthentication();
 
   return (
     <View style={styles.headerContainer}>
@@ -15,30 +15,23 @@ export default function Header({ name, icon }) {
         <Text style={styles.greetingText}>
           {name}
         </Text>
-        <Ionicons name={icon} color={'#fff'} size={28} />
+        <TouchableOpacity onPress={onIconPress}>
+          <Ionicons name={icon} color={'#fff'} size={28} />
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   headerContainer: {
-    // flex:1,
-    paddingHorizontal:10,
-    paddingVertical :20,
-    // borderWidth: 2,
-    // borderColor: "#fff"
-    // borderWidth: "1px",
-    // borderColor: "#fff"
-
-    // flexDirection: 'row',
-    // justifyContent: 'space-between',
-    // alignItems: 'center'
+    paddingHorizontal: 10,
+    paddingVertical: 20,
   },
   textContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
-
   },
   greetingText: {
     fontSize: 24,

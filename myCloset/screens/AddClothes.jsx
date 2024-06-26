@@ -1,28 +1,32 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Button, ActivityIndicator, Image, Modal, ScrollView ,Alert} from 'react-native';
+import { View, StyleSheet, Button, ActivityIndicator, Image, Text, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
-import { categories } from '../assets/data/categories'; 
-import ColorPickerModal from '../components/AddClothes/ColorPickerModal';
+import { categories } from '../assets/data/categories';
 import EditClothingDetailsModal from '../components/AddClothes/ClothingDetailsModal';
-
-
-const seasons = ['Spring', 'Summer', 'Autumn', 'Winter'];
-
+import { uploadImage } from '../config/cloudinary';
+import Header from '../components/Header';
+import { COLORS } from '../constants';
+import * as ImageManipulator from 'expo-image-manipulator';
+import { fabrics } from '../assets/data/fabrics';
+import { useNavigation } from '@react-navigation/native';
+const popularTags = ['#Casual', '#Formal', '#Business', '#Party', '#Sports', '#Wedding', '#Vacation', '#Beach', '#Date_Night', '#Festive'];
 const AddClothes = () => {
+  const navigation = useNavigation();
   const [photo, setPhoto] = useState(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
-  const [label, setLabel] = useState('');
   const [colorPalette, setColorPalette] = useState([]);
-  const [selectedSeasons, setSelectedSeasons] = useState({});
-  const [selectedLabel, setSelectedLabel] = useState(categories[0].subOptions[0].label);
+  const [selectedSeasons, setSelectedSeasons] = useState([0, 0, 0, 0]);
   const [selectedCategory, setSelectedCategory] = useState(categories[0].label);
   const [selectedSubCategory, setSelectedSubCategory] = useState(categories[0].subOptions[0].label);
-  const [allSeasonsChecked, setAllSeasonsChecked] = useState(false);
-  
+  const [allSeasonsChecked, setAllSeasonsChecked] = useState(true);
+  const [selectedFabric, setSelectedFabric] = useState(fabrics[0].fabricName);
+  const [selectedTags, setSelectedTags] = useState([popularTags[0]]);
 
+  
   const requestPermission = async (permissionFunc) => {
     const permissionResult = await permissionFunc();
     if (permissionResult.status !== 'granted') {
@@ -32,19 +36,36 @@ const AddClothes = () => {
     return true;
   };
 
+  const adjustImageQuality = async (uri) => {
+    try {
+      const adjustedImage = await ImageManipulator.manipulateAsync(
+        uri,
+        [
+          { resize: { width: 1080 } }, 
+        ],
+        { compress: 1, format: ImageManipulator.SaveFormat.JPEG } 
+      );
+      return adjustedImage.uri;
+    } catch (err) {
+      console.error('Justed Img error:', err);
+      alert('Failed to upload and process photo');
+    }
+  };
+
   const handleChoosePhoto = async () => {
     const hasPermission = await requestPermission(ImagePicker.requestMediaLibraryPermissionsAsync);
     if (!hasPermission) return;
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 4],
+      allowsEditing: false,
       quality: 1,
     });
 
     if (!result.cancelled) {
-      setPhoto(result.assets[0]);
+      const adjustedUri = await adjustImageQuality(result.assets[0].uri);
+      setPhoto({ ...result.assets[0], uri: adjustedUri });
+      handleUploadPhoto({ ...result.assets[0], uri: adjustedUri });
     }
   };
 
@@ -54,31 +75,39 @@ const AddClothes = () => {
 
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 4],
+      allowsEditing: false,
       quality: 1,
     });
 
     if (!result.cancelled) {
-      setPhoto(result.assets[0]);
+      const adjustedUri = await adjustImageQuality(result.assets[0].uri);
+      setPhoto({ ...result.assets[0], uri: adjustedUri });
+      handleUploadPhoto({ ...result.assets[0], uri: adjustedUri });
     }
   };
 
-  const handleUploadPhoto = async () => {
+  const handleUploadPhoto = async (photo) => {
     if (photo) {
       setLoading(true);
+      setUploadProgress(0);
       try {
-        const cloudinaryUrl = "https://res.cloudinary.com/depgto6ws/image/upload/v1718708768/ppbyspzdmeecgrq8k18l.jpg";
-        console.log("url is == ", cloudinaryUrl);
-
-        const apiResponse = {
-          "color_palette": ["#2c2d32", "#e2ddd2", "#9b9c93", "#97919d", "#a48c84"],
-          "image_without_background_url": "https://res.cloudinary.com/depgto6ws/image/upload/v1718806821/60b13905-a294-4983-9822-26f647bd958e.png",
-          "label": "T_Shirts"
-        };
-        setResult(apiResponse);
-        setSelectedSubCategory(apiResponse.label)
-        setColorPalette(apiResponse.color_palette);
+        const cloudinaryResponse = await uploadImage(photo.uri);
+        const cloudinaryUrl = cloudinaryResponse.secure_url;
+        console.log("Now we have link === ," , cloudinaryUrl);
+      
+        const apiResponse = await axios.post('https://mycloset.jce.ac/recognize-clothes-and-colors/', {
+          image_url: cloudinaryUrl,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer YOUR_AUTH_TOKEN', // Replace with your actual auth token
+          }
+        });     
+        console.log(apiResponse.data)  
+        setResult(apiResponse.data);
+        setSelectedSubCategory(apiResponse.data.label)
+        setColorPalette(apiResponse.data.color_palette);
         setModalVisible(true);
       } catch (error) {
         console.error('Upload error:', error);
@@ -88,32 +117,65 @@ const AddClothes = () => {
       }
     }
   };
-
+  
   const handleSave = async () => {
+    if(!selectedSubCategory){
+      Alert.alert(
+        'Warning',
+        'Please select a subcategory before saving.',
+        [{ text: 'OK' }]
+      );
+      setLoading(false);
+      return;
+    }
+    if(selectedTags.length === 0){
+      Alert.alert(
+        'Warning',
+        'Please select a tag before saving.',
+        [{ text: 'OK' }]
+      );
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       console.log(selectedCategory)
       console.log(selectedSubCategory)
-      const temp = {  imgUrl: result.image_without_background_url,
-      seasons: Object.keys(selectedSeasons).filter(season => selectedSeasons[season]).map(season => seasons.indexOf(season)),
-      colors: colorPalette,
-      fabric: 'cotton'}
+      const temp = {
+        imgUrl: result.image_without_background_url,
+        seasons: selectedSeasons,
+        colors: colorPalette,
+        fabric: selectedFabric,
+        tags : selectedTags
+      }
       console.log(temp)
       const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234/${selectedCategory}/${selectedSubCategory}`, {
         imgUrl: result.image_without_background_url,
-        seasons: Object.keys(selectedSeasons).filter(season => selectedSeasons[season]).map(season => seasons.indexOf(season)),
+        seasons: selectedSeasons,
         colors: colorPalette,
-        fabric: 'cotton' 
+        fabric: selectedFabric,
+        tags : selectedTags
       },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer YOUR_AUTH_TOKEN', // ===Replace with MY actual auth token
-        }
-      });
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer YOUR_AUTH_TOKEN', // ===Replace with MY actual auth token
+          }
+        });
       console.log(response.data);
       setModalVisible(false);
-      alert('Clothing item saved successfully!');
+      Alert.alert(
+        'Success',
+        'Clothing item saved successfully!',
+        [
+          { text: 'Add Another Clothing item', onPress: () => handleCancel() },
+          { text: 'Show Your Wardrobe', onPress: () => {
+            
+            handleCancel();navigation.navigate('userCategory') }
+          },
+        ]
+      );
+     
     } catch (error) {
       console.error('Save error:', error);
       alert('Failed to save clothing item');
@@ -123,21 +185,29 @@ const AddClothes = () => {
   };
 
 
-  const handleSeasonChange = (season) => {
-    setSelectedSeasons({
-      ...selectedSeasons,
-      [season]: !selectedSeasons[season],
+  const handleSeasonChange = (seasonIndex) => {
+    setSelectedSeasons((prevSelectedSeasons) => {
+      const updatedSeasons = [...prevSelectedSeasons];
+      updatedSeasons[seasonIndex] = updatedSeasons[seasonIndex] === 0 ? 1 : 0;
+      return updatedSeasons;
     });
   };
+  const handleTagToggle = (tag) => {
+    if (selectedTags.includes(tag)) {
+      setSelectedTags(selectedTags.filter(t => t !== tag));
+    } else {
+      setSelectedTags([...selectedTags, tag]);
+    }
+  };
+  
+  
 
   const handleAllSeasonsChange = () => {
-    const newSelectedSeasons = {};
-    seasons.forEach(season => {
-      newSelectedSeasons[season] = !allSeasonsChecked;
-    });
-    setSelectedSeasons(newSelectedSeasons);
+    const newValue = allSeasonsChecked ? 1 : 0;
+    setSelectedSeasons([newValue, newValue, newValue, newValue]);
     setAllSeasonsChecked(!allSeasonsChecked);
   };
+  
 
   const handleCloseModal = () => {
     Alert.alert(
@@ -145,38 +215,49 @@ const AddClothes = () => {
       "Are you sure you want to close without saving?",
       [
         { text: "Cancel", style: "cancel" },
-        { text: "Yes", onPress: () => setModalVisible(false) }
+        { text: "Yes", onPress: () => {
+          setModalVisible(false)
+          setPhoto(null)} }
       ]
     );
   };
 
- 
+
+  const handleCancel = () => {
+    setPhoto(null);
+    setResult(null);
+  };
+  
   return (
     <View style={styles.screen}>
+      <Header name={"Add Your Item!"} icon={''} />
       <View style={styles.buttonContainer}>
-        <Button onPress={handleChoosePhoto} title="Select an image" />
-        <Button onPress={handleOpenCamera} title="Open camera" />
+        <Button onPress={handleChoosePhoto} title="Select an image" color={'#fff'} />
+        <Button onPress={handleOpenCamera} title="Open camera" color={'#fff'} />
       </View>
-
+  
       <View style={styles.imageContainer}>
         {photo && (
           <>
             <Image source={{ uri: photo.uri }} style={styles.image} />
-            <Button title="Upload Photo" onPress={handleUploadPhoto} />
+            <Button title="Cancel" onPress={handleCancel} color={'red'} />
           </>
         )}
-        {loading && <ActivityIndicator size="large" color="#0000ff" />}
+        {loading && (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={'blue'} />
+            <Text style={styles.loadingText}>{`Uploading: ${uploadProgress}%`}</Text>
+          </View>
+        )}
         {result && (
           <EditClothingDetailsModal
             visible={modalVisible}
             result={result}
-            selectedLabel={selectedLabel}
-            setSelectedLabel={setSelectedLabel}
             colorPalette={colorPalette}
-            setColorPalette= {setColorPalette}
+            setColorPalette={setColorPalette}
             selectedSeasons={selectedSeasons}
             handleSeasonChange={handleSeasonChange}
-            onLabelChange={(itemValue) => setSelectedLabel(itemValue)}
+            onLabelChange={(itemValue) => setSelectedSubCategory(itemValue)}
             allSeasonsChecked={allSeasonsChecked}
             handleAllSeasonsChange={handleAllSeasonsChange}
             handleSave={handleSave}
@@ -185,9 +266,12 @@ const AddClothes = () => {
             setSelectedCategory={setSelectedCategory}
             selectedSubCategory={selectedSubCategory}
             setSelectedSubCategory={setSelectedSubCategory}
+            selectedFabric = {selectedFabric}
+            setSelectedFabric = {setSelectedFabric}
+            handleTagToggle= {handleTagToggle}
+            selectedTags = {selectedTags}
           />
         )}
-    
       </View>
     </View>
   );
@@ -196,21 +280,34 @@ const AddClothes = () => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: COLORS.background,
+    paddingHorizontal: 20,
+    paddingTop: 40,
   },
   buttonContainer: {
-    width: 400,
     flexDirection: 'row',
     justifyContent: 'space-around',
+    marginVertical: 20,
   },
   imageContainer: {
-    padding: 30,
+    alignItems: 'center',
   },
   image: {
-    width: 400,
+    width: 300,
     height: 300,
-    resizeMode: 'cover',
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 20,
+  },
+  loadingText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#f0f0',
   },
 });
 

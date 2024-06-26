@@ -18,13 +18,13 @@ const ShowCategories = () => {
 
   const handleCardPress = (category) => {
     setSelectedCategory(category);
-    if(category === "Tops") {setSelectedSubCategory("T_Shirts");}
+    if(category === "Tops") {setSelectedSubCategory("T_shirt");}
     if(category === "Bottoms") {setSelectedSubCategory("Jeans");}
-    if(category === "Outwear") {setSelectedSubCategory("Jackets");}
+    if(category === "Outwear") {setSelectedSubCategory("Jacket");}
     if(category === "Shoes") {setSelectedSubCategory("Casual_Shoes");}
     if(category === "Bags") {setSelectedSubCategory("Shoulder_Bag");}
-    if(category === "Head_wear") {setSelectedSubCategory("Hats");}
-    if(category === "Jewelry") {setSelectedSubCategory("Necklaces");}
+    if(category === "Head_wear") {setSelectedSubCategory("Hat");}
+    if(category === "Jewelry") {setSelectedSubCategory("Necklace");}
     if(category === "Other_items") {setSelectedSubCategory("others");}
   };
 
@@ -64,7 +64,7 @@ const ShowCategories = () => {
 
     return (
       <View style={styles.seasonsContainer}>
-        {Object.keys(seasons).map((season) => (
+        {Object.keys(seasons)?.map((season) => (
           seasons[season] === 1 && (
             <Text key={season} style={[styles.seasonText, styles.activeSeason]}>
               {seasonNames[season]}
@@ -78,7 +78,7 @@ const ShowCategories = () => {
   const renderColors = (colors) => {
     return (
       <View style={styles.colorsContainer}>
-        {colors.map((color, index) => (
+        {colors?.map((color, index) => (
           <View key={index} style={[styles.colorBox, { backgroundColor: color }]} />
         ))}
       </View>

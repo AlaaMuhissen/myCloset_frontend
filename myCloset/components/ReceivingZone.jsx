@@ -28,8 +28,8 @@ const ReceivingZone = forwardRef(({ received, sizes, positions, setPositions, ha
   };
 
   return (
-    <View onLayout={handleLayout}>
-        <View style={[styles.centeredContent, !captureMode && styles.receivingZone]}>
+    <View>
+        <View style={[ !captureMode && styles.receivingZone]} onLayout={handleLayout}>
       <ViewShot ref={ref} style={[styles.centeredContent , captureMode &&styles.receivingZoneForScreenshot]} options={{ format: 'jpg', quality: 0.8 }}>
           <DraxView
             style={styles.receivingZoneInner}
@@ -82,15 +82,16 @@ const styles = StyleSheet.create({
   },
   receiveZone:{
     position : 'absolute',
-    color: COLORS.gray
-
+    color: COLORS.gray,
+    right : -50
+    
   },
-  centeredContent: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  // centeredContent: {
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  // },
   receivingZone: {
-    height: height * 0.4,
+    height: 400,
     borderRadius: 10,
     marginVertical: 10,
     backgroundColor: '#f0f0f0',
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
   },
   receivingZoneForScreenshot: {
-    height: height * 0.4,
+    height: 400,
     backgroundColor: '#f0f0f0',
     width:"100%"
   },

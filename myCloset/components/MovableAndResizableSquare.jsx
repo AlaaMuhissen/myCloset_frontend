@@ -1,22 +1,22 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, PanResponder, Dimensions } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
 const MovableAndResizableSquare = ({ item, size, position, onResize, onMove, onRemove, captureMode }) => {
-
-  // console.log("=====item== " , item)
-  console.log("=====size== " , size)
-  console.log("=====position== " , position)
   const [currentSize, setCurrentSize] = useState(size);
   const [currentPosition, setCurrentPosition] = useState(position);
+  // console.log('item => ' , item)
+  // console.log('position => ' ,position )
   useEffect(() => {
     setCurrentSize(size);
-}, [size]);
+  }, [size]);
 
-useEffect(() => {
+  useEffect(() => {
+    console.log("positiom =>" ,position)
     setCurrentPosition(position);
-}, [position]);
+  }, [position]);
+
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (e, gestureState) => {
@@ -29,7 +29,7 @@ useEffect(() => {
       const newX = currentPosition.x + gestureState.dx;
       const newY = currentPosition.y + gestureState.dy;
       if (newY < 0 || newY + currentSize.height > height * 0.5) {
-        console.log("exittt");
+        console.log("exit");
         setCurrentPosition({ x: 50, y: 50 });
       } else {
         setCurrentPosition({ x: newX, y: newY });
