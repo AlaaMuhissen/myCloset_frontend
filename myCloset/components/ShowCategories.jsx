@@ -6,6 +6,8 @@ import SubCategoryList from './SubCategoryList';
 import { SIZES } from '../constants';
 import axios from 'axios';
 import { Image as CachedImage } from 'react-native-expo-image-cache';
+import { Ionicons } from "@expo/vector-icons";
+const seasons = ['Spring', 'Summer', 'Autumn', 'Winter'];
 
 const ShowCategories = () => {
   
@@ -15,7 +17,7 @@ const ShowCategories = () => {
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-
+ 
   const handleCardPress = (category) => {
     setSelectedCategory(category);
     if(category === "Tops") {setSelectedSubCategory("T_shirt");}
@@ -36,7 +38,10 @@ const ShowCategories = () => {
     setSelectedItem(item);
     setModalVisible(true);
   };
+  
+  const handleEditItem = () =>{
 
+  }
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -132,33 +137,73 @@ const ShowCategories = () => {
         )}
       </View>
       {selectedItem && (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <ScrollView style={styles.modalContent}>
-              <CachedImage
-                style={styles.modalImage}
-                uri={selectedItem.imgUrl}
-                resizeMode="contain"
-              />
-              <Text style={styles.modalText}>Category: {selectedCategory}</Text>
-              <Text style={styles.modalText}>SubCategory: {selectedSubCategory}</Text>
-            
-              <Text style={styles.modalText}>Seasons:</Text>
-              {renderSeasons(selectedItem.seasons)}
-              <Text style={styles.modalText}>Colors:</Text>
-              {renderColors(selectedItem.colors)}
-              <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-                <Text style={styles.closeButtonText}>Close</Text>
-              </TouchableOpacity>
-            </ScrollView>
+  <Modal
+    animationType="slide"
+    transparent={true}
+    visible={modalVisible}
+    onRequestClose={() => setModalVisible(false)}
+  >
+    <View style={styles.modalContainer}>
+      <View style={styles.modalContent}>
+          <TouchableOpacity style={styles.editIconContainer} onPress={() => {handleEditItem}}>
+              <Ionicons name="md-create" size={24} color="#333" />
+            </TouchableOpacity>
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          <CachedImage
+            style={styles.modalImage}
+            uri={selectedItem.imgUrl}
+            resizeMode="contain"
+          />
+          <Text style={styles.modalTitle}>Item Details</Text>
+          <View style={styles.modalDetailContainer}>
+            <Text style={styles.modalLabel}>Category:</Text>
+            <Text style={styles.modalValue}>{selectedCategory}</Text>
           </View>
-        </Modal>
-      )}
+          <View style={styles.modalDetailContainer}>
+            <Text style={styles.modalLabel}>SubCategory:</Text>
+            <Text style={styles.modalValue}>{selectedSubCategory}</Text>
+          </View>
+          <View style={styles.modalDetailContainer}>
+            <Text style={styles.modalLabel}>Fabric:</Text>
+            <Text style={styles.modalValue}>{selectedItem.fabric}</Text>
+          </View>
+          <View style={styles.modalDetailContainer}>
+            <Text style={styles.modalLabel}>Seasons:</Text>
+            <View style={styles.seasonsContainer}>
+            <Text style={styles.seasonText}>
+                {selectedItem.seasons
+                  .map((season, index) => (season === 1 ? seasons[index] : null))
+                  .filter(Boolean)
+                  .join(', ')}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.modalDetailContainer}>
+            <Text style={styles.modalLabel}>Colors:</Text>
+            <View style={styles.colorsContainer}>
+              {selectedItem.colors.map((color, index) => (
+                <View key={index} style={[styles.colorBox, { backgroundColor: color }]} />
+              ))}
+            </View>
+          </View>
+          <View style={styles.modalDetailContainer}>
+            <Text style={styles.modalLabel}>Tags:</Text>
+            <View style={styles.tagsContainer}>
+              {selectedItem.tags.map((tag, index) => (
+                <Text key={index} style={styles.tag}>
+                  {tag}
+                </Text>
+              ))}
+            </View>
+          </View>
+          <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+            <Text style={styles.closeButtonText}>Close</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+    </View>
+  </Modal>
+)}
     </>
   );
 };
@@ -170,15 +215,19 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   imageContainer: {
- 
     width: '30%',
-
     aspectRatio: 1, // This maintains the aspect ratio
+    margin: 5,
     margin: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1, // Set the width of the border
-    borderColor: '#fff', // Set the color of the border
+    borderRadius: 15, 
+    overflow: 'hidden', 
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5, 
   },
   image: {
     width: '100%',
@@ -186,35 +235,64 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContent: {
     width: '90%',
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 20,
     padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  scrollViewContent: {
+    alignItems: 'center',
   },
   modalImage: {
     width: '100%',
     height: 300,
+    borderRadius: 20,
+    marginBottom: 20,
   },
-  modalText: {
-    fontSize: 18,
-    marginVertical: 10,
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 20,
+  },
+  modalDetailContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  modalLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#555',
+  },
+  modalValue: {
+    fontSize: 14,
+    color: '#777',
   },
   seasonsContainer: {
     flexDirection: 'row',
+    justifyContent:'space-between',
     flexWrap: 'wrap',
   },
   seasonText: {
-    fontSize: 16,
+    fontSize: 14,
     marginRight: 10,
-    color: 'gray',
+    color: '#888',
   },
   activeSeason: {
-    color: 'black',
+    color: '#333',
     fontWeight: 'bold',
   },
   colorsContainer: {
@@ -222,21 +300,35 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   colorBox: {
-    width: 20,
-    height: 20,
+    width: 24,
+    height: 24,
     marginRight: 10,
     borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  tag: {
+    marginRight: 5,
+    marginBottom: 5,
+    fontSize: 14,
+    color: '#777',
   },
   closeButton: {
-    backgroundColor: '#2196F3',
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: '#FD3A69',
+    padding: 15,
+    borderRadius: 30,
     alignItems: 'center',
     marginTop: 20,
+    width: '100%',
   },
   closeButtonText: {
     color: 'white',
     fontSize: 16,
+    fontWeight: 'bold',
   },
   scrollViewContent: {
     flexDirection: 'row',

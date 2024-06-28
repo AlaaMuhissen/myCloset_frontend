@@ -13,7 +13,8 @@ import TakePic from '../components/TakePic.jsx';
 import EditOutfit from '../screens/EditOutfit.jsx';
 import ShowOutfits from '../screens/ShowOutfits.jsx';
 import UserCategory from '../screens/UserCategory.jsx';
-
+import FilterScreen from '../screens/FilterScreen.jsx';
+import { Provider as PaperProvider } from 'react-native-paper';
 const Stack = createStackNavigator();
 
 export default function UserStack() {
@@ -31,6 +32,8 @@ export default function UserStack() {
         <Stack.Screen name="Settings" options={{ headerShown: true }} component={SettingsScreen} />
         <Stack.Screen name="ShowOutfits" options={{ headerShown: false}} component={ShowOutfits}  />
         <Stack.Screen name="EditOutfit" component={EditOutfit} options={{ headerShown: false}}/>
+        <Stack.Screen name="FilterScreen" component={FilterScreen} options={{ headerShown: false}}/>
+
       </Stack.Navigator>
     </NavigationContainer>
     </SafeAreaView>
