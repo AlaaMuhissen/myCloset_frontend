@@ -4,7 +4,7 @@ import { DraxView } from 'react-native-drax';
 import MovableAndResizableSquare from './MovableAndResizableSquare'
 import ViewShot from 'react-native-view-shot';
 import { centerPoint } from '@mgcrea/react-native-dnd';
-import { COLORS } from '../constants';
+import { COLORS } from '../../constants';
 
 const { height } = Dimensions.get('window');
 
@@ -83,13 +83,11 @@ const styles = StyleSheet.create({
   receiveZone:{
     position : 'absolute',
     color: COLORS.gray,
-    right : -50
+    right : 110,
+    margin: 15
     
   },
-  // centeredContent: {
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  // },
+
   receivingZone: {
     height: 400,
     borderRadius: 10,

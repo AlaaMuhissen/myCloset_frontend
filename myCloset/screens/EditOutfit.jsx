@@ -4,11 +4,11 @@ import axios from 'axios';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import ViewShot from 'react-native-view-shot';
 import { DraxProvider } from 'react-native-drax';
-import MovableAndResizableSquare from '../components/MovableAndResizableSquare';
+import MovableAndResizableSquare from '../components/Outfit/MovableAndResizableSquare';
 import { uploadImage } from '../config/cloudinary';
-import ClothesGrid from '../components/ClothesGrid';
-import CategoryList from '../components/CategotyList';
-import SubCategoryList from '../components/SubCategoryList';
+import ClothesGrid from '../components/userCategories/ClothesGrid';
+import CategoryList from '../components/userCategories/CategoryList';
+import SubCategoryList from '../components//userCategories/SubCategoryList';
 import { categories } from '../assets/data/categories';
 import { COLORS } from '../constants';
 import Header from '../components/Header';
@@ -283,7 +283,7 @@ const EditOutfit = () => {
     marginVertical: 10,
   },
   clothesGridContainer: {
-    height: height * 0.18, // Adjust this value as needed
+    height: height * 0.18, 
   },
 });
 

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
-import { SIZES } from '../constants';
+import { SIZES } from '../../constants';
 
 const SubCategoryList = ({ subOptions, handleSubCategory ,isSmall}) => {
+
   const [selectedSubCategory, setSelectedSubCategory] = useState(subOptions[0].label);
 
   useEffect(() => {
@@ -13,7 +14,7 @@ const SubCategoryList = ({ subOptions, handleSubCategory ,isSmall}) => {
     <TouchableOpacity
       onPress={() => {
         setSelectedSubCategory(item.label);
-        handleSubCategory(item.label); // Call the handler when a subcategory is selected
+        handleSubCategory(item.label); 
       }}
       style={styles.btn(selectedSubCategory, item.label)}
     >
@@ -38,10 +39,10 @@ const styles = StyleSheet.create({
     marginLeft: 10,
    
   },
-  btn: (selectedCategory, title) => ({
+  btn: (selectedSubCategory, title) => ({
     marginHorizontal: 10,
     borderBottomWidth: 1,
-    borderColor: selectedCategory === title ? '#FFC700' : '#fff',
+    borderColor: selectedSubCategory === title ? '#FFC700' : '#fff',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 5,

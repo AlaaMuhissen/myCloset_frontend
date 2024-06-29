@@ -8,7 +8,7 @@ import AddClothes from '../screens/AddClothes.jsx';
 import AddOutfit from '../screens/AddOutfit.jsx';
 import { SafeAreaView ,StatusBar } from 'react-native';
 import SettingsScreen from '../screens/SettingsScreen.jsx';
-import TakePic from '../components/TakePic.jsx';
+
 
 import EditOutfit from '../screens/EditOutfit.jsx';
 import ShowOutfits from '../screens/ShowOutfits.jsx';

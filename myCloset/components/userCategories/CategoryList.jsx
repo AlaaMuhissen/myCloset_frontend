@@ -1,8 +1,8 @@
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { categories } from '../assets/data/categories';
-import CategoryCard from './Cards/CategoryCard';
-import { SIZES } from '../constants';
+import { categories } from '../../assets/data/categories';
+import CategoryCard from '../Cards/CategoryCard';
+import { SIZES } from '../../constants';
 
 
 const CategoryList = ({ selectedCategory, handleCardPress ,withIcon }) => {
@@ -16,6 +16,7 @@ const CategoryList = ({ selectedCategory, handleCardPress ,withIcon }) => {
             title={item.label}
             selectedCategory={selectedCategory}
             handleCardPress={handleCardPress}
+            withIcon = {true}
           />
         )}
         keyExtractor={(item) => item.label}

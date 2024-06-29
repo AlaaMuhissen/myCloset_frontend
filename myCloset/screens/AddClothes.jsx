@@ -253,6 +253,7 @@ const AddClothes = () => {
           <EditClothingDetailsModal
             visible={modalVisible}
             result={result}
+            editingMode= {false}
             colorPalette={colorPalette}
             setColorPalette={setColorPalette}
             selectedSeasons={selectedSeasons}

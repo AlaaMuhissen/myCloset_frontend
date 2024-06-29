@@ -12,6 +12,7 @@ const popularTags = ['#Casual', '#Formal', '#Business', '#Party', '#Sports', '#W
 const EditClothingDetailsModal = ({
   visible,
   result,
+  editingMode,
   colorPalette,
   setColorPalette,
   selectedSeasons,
@@ -102,8 +103,9 @@ const formatNames = (name) => {
             {result.image_without_background_url && (
               <Image source={{ uri: result.image_without_background_url }} style={styles.image} />
             )}
-
-            <TouchableOpacity onPress={() => setCategoryCollapsed(!isCategoryCollapsed)} style={styles.header}>
+           {!editingMode &&
+           <>
+           <TouchableOpacity onPress={() => setCategoryCollapsed(!isCategoryCollapsed)} style={styles.header}>
               <View style={styles.collapsibleContainer}>
                 <Text style={styles.headerText}>Category </Text>
                 <Text style={styles.headerSelected}>
@@ -137,7 +139,8 @@ const formatNames = (name) => {
                 </Picker>
               </View>
             </Collapsible>
-
+            </> 
+            }
             <TouchableOpacity onPress={() => setColorCollapsed(!isColorCollapsed)} style={styles.header}>
               <View style={styles.collapsibleContainer}>
                 <Text style={styles.headerText}>Colors</Text>
@@ -170,7 +173,7 @@ const formatNames = (name) => {
               <Text style={styles.headerTextSeason}>Seasons</Text>
                 {isSeasonCollapsed && (
                   <Text style={styles.headerSelected}>
-                    {selectedSeasons.map((value, index) => value === 0 ? seasons[index] : null).filter(Boolean).join(', ')}
+                    {selectedSeasons.map((value, index) => value === 1 ? seasons[index] : null).filter(Boolean).join(', ')}
                   </Text>
                 )}
 
@@ -189,7 +192,7 @@ const formatNames = (name) => {
                             {seasons.map((season, index) => (
                   <View key={season} style={styles.checkboxRow}>
                     <Checkbox
-                      value={selectedSeasons[index] === 0}
+                      value={selectedSeasons[index] === 1}
                       onValueChange={() => handleSeasonChange(index)}
                     />
                     <Text style={{ fontSize: 12, margin: 10 }}>{season}</Text>

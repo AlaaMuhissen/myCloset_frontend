@@ -1,6 +1,6 @@
 import React from 'react'
 import { ScrollView, View , StyleSheet } from 'react-native'
-import ShowCategories from '../components/ShowCategories'
+import ShowCategories from '../components/userCategories/ShowCategories'
 import Header from '../components/Header'
 import { useNavigation } from '@react-navigation/native'
 

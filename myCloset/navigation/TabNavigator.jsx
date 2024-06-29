@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { View, Modal, TouchableOpacity } from 'react-native';
-import AddDropdown from '../components/AddDropdown';
+import AddDropdown from '../components/Home/AddDropdown';
 import Dashboard from '../screens/Dashboard';
 import AddClothes from '../screens/AddClothes';
 import AddOutfit from '../screens/AddOutfit';

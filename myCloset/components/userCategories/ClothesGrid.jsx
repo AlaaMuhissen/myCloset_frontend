@@ -37,8 +37,7 @@ const styles = StyleSheet.create({
     margin: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#fff',
+  
   },
   clothesImage: {
     width: '100%',

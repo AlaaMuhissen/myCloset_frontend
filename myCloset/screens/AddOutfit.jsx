@@ -3,10 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Dimensions
 import axios from 'axios';
 import { DraxProvider } from 'react-native-drax';
 import * as FileSystem from 'expo-file-system';
-import ReceivingZone from '../components/ReceivingZone';
-import CategoryList from '../components/CategotyList';
-import SubCategoryList from '../components/SubCategoryList';
-import ClothesGrid from '../components/ClothesGrid';
+import ReceivingZone from '../components/Outfit/ReceivingZone';
+import CategoryList from '../components/userCategories/CategoryList';
+import SubCategoryList from '../components/userCategories/SubCategoryList';
+import ClothesGrid from '../components/userCategories/ClothesGrid';
 import { categories } from '../assets/data/categories';
 import { uploadImage } from '../config/cloudinary';
 import { COLORS } from '../constants';
@@ -188,7 +188,7 @@ const AddOutfit = () => {
             {selectedCategoryData && (
               <SubCategoryList subOptions={selectedCategoryData.subOptions} handleSubCategory={handleSubCategory} isSmall={true} />
             )}
-              <ScrollView>
+              <ScrollView style={styles.clothesGridContainer}>
                 <ClothesGrid
                   clothesData={clothesData}
                   selectedCategory={selectedCategory}
@@ -231,6 +231,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
     color: "#000",
+  },
+  clothesGridContainer: {
+    height: height * 0.18, // Adjust this value as needed
   },
 });
 
