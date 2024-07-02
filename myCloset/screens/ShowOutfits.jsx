@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Image, Button } from 'react-native';
 import axios from 'axios';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '../constants';
 import Header from '../components/Header';
@@ -11,33 +11,85 @@ const ShowOutfits = () => {
   const [selectedSeason, setSelectedSeason] = useState('Summer');
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [selectedItems, setSelectedItems] = useState(new Set());
+  const [isSelectedAll, setIsSelectedAll] = useState(false);
 
-  useEffect(() => {
-    const fetchOutfits = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/outfit/mohissen1234/${selectedSeason}`);
-        if (response.data) {
-          const fetchedOutfits = Object.values(response.data).flat();
-          setOutfits(fetchedOutfits);
-        } else {
-          setOutfits([]);
-        }
-      } catch (error) {
-        console.error('Error fetching outfits:', error);
+
+  const fetchOutfits = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/outfit/mohissen1234/${selectedSeason}`);
+      if (response.data) {
+        const fetchedOutfits = Object.values(response.data).flat();
+        setOutfits(fetchedOutfits);
+      } else {
         setOutfits([]);
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching outfits:', error);
+      setOutfits([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchOutfits();
   }, [selectedSeason]);
 
-  const handleEditOutfit = (outfit) => {
-    // console.log(outfit)
-    navigation.navigate('EditOutfit', { season: selectedSeason, outfit });
+  const toggleSelectItem = (itemId) => {
+    setSelectedItems(prevSelectedItems => {
+      const updatedSelectedItems = new Set(prevSelectedItems);
+      if (updatedSelectedItems.has(itemId)) {
+        updatedSelectedItems.delete(itemId);
+      } else {
+        updatedSelectedItems.add(itemId);
+      }
+      return updatedSelectedItems;
+    });
   };
+  
+  const handleLongPress = (itemId) => {
+    setIsSelectionMode(true);
+    toggleSelectItem(itemId);
+  };
+  
+  const handleItemPress = (outfit) => {
+    if (isSelectionMode) {
+      toggleSelectItem(outfit._id);
+    } else {
+      navigation.navigate('EditOutfit', { season: selectedSeason, outfit });
+    }
+  };
+  
+  const handleCancelSelection = () => {
+    setIsSelectionMode(false);
+    setSelectedItems(new Set());
+  };
+  
+  
+  const handleDeletedItems = async ()  => {
 
+    try{
+      setLoading(true);
+      const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/outfit/mohissen1234/${selectedSeason}`, {
+        data: { itemsId: Array.from(selectedItems) }
+      });
+      if (response.status === 200) {
+        Alert.alert('Success', 'Selected outfits deleted successfully!');
+        setIsSelectionMode(false);
+        setIsSelectedAll(false);
+        setSelectedItems(new Set());
+        fetchOutfits();
+        setLoading(true);
+      } else {
+        Alert.alert('Error', 'Failed to delete selected outfits.');
+      }
+    }catch(error){
+      console.error('Error in deleting: ' , error)
+      Alert.alert('Error', 'An error occurred while deleting outfits.');
+    }
+  };
   const renderSeasonButton = (season) => {
     return (
       <TouchableOpacity
@@ -48,6 +100,9 @@ const ShowOutfits = () => {
         <Text style={styles.seasonButtonText}>{season}</Text>
       </TouchableOpacity>
     );
+  };
+  const handleEnableSelectionMode = () => {
+    setIsSelectionMode(true);
   };
 
   return (
@@ -64,21 +119,37 @@ const ShowOutfits = () => {
               <Text style={styles.outfitNum}>{outfits.length}</Text>
           </View>
       </View>
-
+      {!isSelectionMode && <Button title="Select" onPress={handleEnableSelectionMode} />}
+      {isSelectionMode && <View style={styles.buttonContainer}>
+      { isSelectedAll ? <Button title="Select All" onPress={() => {setSelectedItems(new Set(outfits.map(outfit => outfit._id))); setIsSelectedAll(false)}} />: 
+     <Button title="Deselect All" onPress={() => { setIsSelectedAll(true) ;setSelectedItems(new Set())}} />
+      }
+       <TouchableOpacity onPress={handleDeletedItems}>
+        <Ionicons name="trash-outline" color={'red'} size={24} style={styles.icon} />
+        </TouchableOpacity>
+        
+        {isSelectedAll && <Button title="Cancel" onPress={handleCancelSelection} />} 
+       
+      </View>
+}
         {loading ? (
           <Text>Loading ...</Text>
         ) : (
           outfits.length > 0 ? (
             <View style={styles.outfitsSection}>
-              {outfits.map((outfit, index) => (
-                <View key={index} style={styles.outfitContainer}>
-                  <TouchableOpacity style={styles.editIcon} onPress={() => handleEditOutfit(outfit)}>
+            {outfits.map((outfit, index) => (
+              <TouchableOpacity key={index} onLongPress={() => handleLongPress(outfit._id)} onPress={() => handleItemPress(outfit)}>
+                <View style={[styles.outfitContainer, selectedItems.has(outfit._id) && styles.selectedOutfitContainer]}>
+                  <TouchableOpacity style={styles.editIcon} onPress={() => handleItemPress(outfit)}>
                     <FontAwesome name="edit" size={24} color="black" />
-                  </TouchableOpacity> 
+                  </TouchableOpacity>
                   <Image source={{ uri: outfit.imgUrl }} style={styles.outfitImage} />
                 </View>
-              ))}
-            </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+          
+          
           ) : (
             <Text>No outfits found for {selectedSeason}</Text>
           )
@@ -179,6 +250,15 @@ outfitNum: {
   seasonButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  selectedOutfitContainer: {
+    borderColor: 'blue',
+    borderWidth: 2,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 10,
   },
 });
 

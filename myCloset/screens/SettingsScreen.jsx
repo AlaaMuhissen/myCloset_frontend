@@ -1,5 +1,6 @@
-import React from 'react';
+import React , {useState, useEffect} from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants';
 import { useNavigation } from '@react-navigation/native';
@@ -9,6 +10,29 @@ import { getAuth, signOut }from 'firebase/auth'
 const auth = getAuth();
 const SettingsScreen = () => {
     const navigation = useNavigation();
+    const [loading, setLoading] = useState(true);
+    const [clothesNumber, setClothesNumber] = useState(0);
+
+    useEffect(() => {
+      const fetchClothesNumber = async () => {
+        try {
+          setLoading(true);
+          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234/clothesNumber`);
+          if (response.data) {
+            setClothesNumber(response.data.clothesNumber);
+          } else {
+            setClothesNumber(0);
+          }
+        } catch (error) {
+          console.error('Error fetching outfits:', error);
+          setClothesNumber(0);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchClothesNumber();
+    }, []);
+
     const logOut = () => {
         signOut(auth);
       };
@@ -16,30 +40,29 @@ const SettingsScreen = () => {
         if(screenName === "Sign Out") {
             logOut();
         }
-    else{
-
-        navigation.navigate(screenName);
-    }
+        else{
+            navigation.navigate(screenName);
+        }
     };
-  const renderSection = (title, options) => (
-   
-    <View style={styles.section}>
-      {options.map((option, index) => (
-        <TouchableOpacity 
-          key={index}
-          style={[styles.option, index === options.length - 1 && styles.lastOption]}
-          onPress={() => handleOptionPress(option.screen)}
-          >
-            <View style={{flex:1, flexDirection: 'row',justifyContent: 'center', alignItems:'center',paddingBottom: 10}}>
-                <Ionicons name={option.icon} size={20} color={COLORS.white} style={styles.optionIcon} />
-                <Text style={styles.optionText}>{option.text}</Text>
-            </View>
-            <View>
-          <Ionicons name="chevron-forward-outline" size={20} color={COLORS.white} />
-            </View>
-        </TouchableOpacity>
-      ))}
-    </View>
+    const renderSection = (title, options) => (
+  
+      <View style={styles.section}>
+        {options.map((option, index) => (
+          <TouchableOpacity 
+            key={index}
+            style={[styles.option, index === options.length - 1 && styles.lastOption]}
+            onPress={() => handleOptionPress(option.screen)}
+            >
+              <View style={{flex:1, flexDirection: 'row',justifyContent: 'center', alignItems:'center',paddingBottom: 10}}>
+                  <Ionicons name={option.icon} size={20} color={COLORS.white} style={styles.optionIcon} />
+                  <Text style={styles.optionText}>{option.text}</Text>
+              </View>
+              <View>
+            <Ionicons name="chevron-forward-outline" size={20} color={COLORS.white} />
+              </View>
+          </TouchableOpacity>
+        ))}
+      </View>
   );
 
   return (
@@ -50,7 +73,8 @@ const SettingsScreen = () => {
              <Image source={require('../assets/images/avatar.jpg')} style={styles.userPic} />
                 <View style={{gap:5}}>
                     <Text style={styles.userName}>Alaa Muhissen</Text>
-                    <Text style={styles.itemsNum}>18 item in your wardrobe</Text>
+                    {clothesNumber !== 0 && <Text style={styles.itemsNum}>{clothesNumber} items in your wardrobe</Text>
+                    }
                 </View>
             </View>
 

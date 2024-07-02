@@ -6,9 +6,9 @@ import ViewShot from 'react-native-view-shot';
 import { DraxProvider } from 'react-native-drax';
 import MovableAndResizableSquare from '../components/Outfit/MovableAndResizableSquare';
 import { uploadImage } from '../config/cloudinary';
-import ClothesGrid from '../components/userCategories/ClothesGrid';
-import CategoryList from '../components/userCategories/CategoryList';
-import SubCategoryList from '../components//userCategories/SubCategoryList';
+import ClothesGrid from '../components/User_Categories/ClothesGrid.jsx';
+import CategoryList from '../components/User_Categories/CategoryList';
+import SubCategoryList from '../components/User_Categories/SubCategoryList';
 import { categories } from '../assets/data/categories';
 import { COLORS } from '../constants';
 import Header from '../components/Header';
@@ -19,12 +19,12 @@ const EditOutfit = () => {
     const route = useRoute();
     const navigation = useNavigation();
     const { season, outfit } = route.params;
-    // console.log(outfit._id);
+  
     
     const [selectedCategory, setSelectedCategory] = useState('Tops');
     const [clothesData, setClothesData] = useState(new Map());
     const [loading, setLoading] = useState(true);
-    const [selectedSubCategory, setSelectedSubCategory] = useState('');
+    const [selectedSubCategory, setSelectedSubCategory] = useState('T_shirt');
     const [itemsId, setItemsId] = useState([]);
     const [outfitItem, setOutfitItem] = useState([]);
     const [colorPalette, setColorPalette] = useState([]);
@@ -34,6 +34,7 @@ const EditOutfit = () => {
     const [itemsSource, setItemsSource] = useState(new Map());
     const [captureMode, setCaptureMode] = useState(false);
     const viewShotRef = useRef(null);
+    const [refreshing, setRefreshing] = useState(false);
   
     useEffect(() => {
       if (outfit) {
@@ -47,18 +48,18 @@ const EditOutfit = () => {
       }
     }, [outfit]);
   
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get('https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234');
+        setClothesData(new Map(Object.entries(response.data.categories)));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
     useEffect(() => {
-      const fetchData = async () => {
-        try {
-          setLoading(true);
-          const response = await axios.get('https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234');
-          setClothesData(new Map(Object.entries(response.data.categories)));
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
       fetchData();
     }, []);
   
@@ -84,7 +85,10 @@ const EditOutfit = () => {
     const handleSubCategory = (subCategory) => {
       setSelectedSubCategory(subCategory);
     };
-  
+    const onRefresh = () => {
+      setRefreshing(true);
+      fetchData().finally(() => setRefreshing(false));
+    };
     const addNewItem = (item) => {
             // Check if the item ID already exists in outfitItem
         if (outfitItem.some(existingItem => existingItem._id === item._id)) {
@@ -247,12 +251,18 @@ const EditOutfit = () => {
             <SubCategoryList subOptions={selectedCategoryData.subOptions} handleSubCategory={handleSubCategory} />
           )}
           <ScrollView style={styles.clothesGridContainer}>
+            {console.log("clothesData => ", clothesData )}
+            {console.log("selectedCategory => ", selectedCategory )}
+            {console.log("selectedSubCategory => ", selectedSubCategory )}
             <ClothesGrid
               clothesData={clothesData}
               selectedCategory={selectedCategory}
               selectedSubCategory={selectedSubCategory}
               handleImagePress={handleImagePress}
               loading={loading}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              isSelectionMode= {false}
             />
           </ScrollView>
         </View>

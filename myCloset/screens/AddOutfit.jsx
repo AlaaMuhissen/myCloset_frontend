@@ -4,9 +4,9 @@ import axios from 'axios';
 import { DraxProvider } from 'react-native-drax';
 import * as FileSystem from 'expo-file-system';
 import ReceivingZone from '../components/Outfit/ReceivingZone';
-import CategoryList from '../components/userCategories/CategoryList';
-import SubCategoryList from '../components/userCategories/SubCategoryList';
-import ClothesGrid from '../components/userCategories/ClothesGrid';
+import CategoryList from '../components/User_Categories/CategoryList';
+import SubCategoryList from '../components/User_Categories/SubCategoryList';
+import ClothesGrid from '../components/User_Categories/ClothesGrid.jsx';
 import { categories } from '../assets/data/categories';
 import { uploadImage } from '../config/cloudinary';
 import { COLORS } from '../constants';
@@ -26,6 +26,7 @@ const AddOutfit = () => {
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
   const [captureMode, setCaptureMode] = useState(false);
   const receivingZoneRef = useRef();
+  const [refreshing, setRefreshing] = useState(false);
 
   const resetPosition = (id) => {
     setPositions(prevPositions => ({
@@ -38,6 +39,7 @@ const AddOutfit = () => {
     setSelectedCategory(category);
   };
 
+
   const handleSubCategory = (subCategory) => {
     setSelectedSubCategory(subCategory);
   };
@@ -46,18 +48,18 @@ const AddOutfit = () => {
     addNewItem(item);
   };
 
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234');
+      setClothesData(new Map(Object.entries(response.data.categories)));
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get('https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234');
-        setClothesData(new Map(Object.entries(response.data.categories)));
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, [selectedCategory]);
 
@@ -98,7 +100,10 @@ const AddOutfit = () => {
     };
     setReceived([...received, newItem]);
   };
-
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchData().finally(() => setRefreshing(false));
+  };
   const captureAndUpload = async () => {
     setCaptureMode(true); // Enable capture mode
     setLoading(true);
@@ -194,6 +199,9 @@ const AddOutfit = () => {
                   selectedCategory={selectedCategory}
                   selectedSubCategory={selectedSubCategory}
                   handleImagePress={handleImagePress}
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  isSelectionMode= {false}
                 />
               </ScrollView>
           </View>

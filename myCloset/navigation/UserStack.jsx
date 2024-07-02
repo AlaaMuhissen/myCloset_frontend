@@ -6,7 +6,7 @@ import TabNavigator from './TabNavigator';
 import Category from '../app/CategoryClo/Category.js';
 import AddClothes from '../screens/AddClothes.jsx';
 import AddOutfit from '../screens/AddOutfit.jsx';
-import { SafeAreaView ,StatusBar } from 'react-native';
+import { SafeAreaView ,StatusBar , TouchableOpacity ,StyleSheet} from 'react-native';
 import SettingsScreen from '../screens/SettingsScreen.jsx';
 
 
@@ -15,6 +15,10 @@ import ShowOutfits from '../screens/ShowOutfits.jsx';
 import UserCategory from '../screens/UserCategory.jsx';
 import FilterScreen from '../screens/FilterScreen.jsx';
 import { Provider as PaperProvider } from 'react-native-paper';
+import OutfitDetails from '../components/Outfit/OutfitDetails.jsx';
+import AIOutfitSuggestions from '../components/AIOutfitSuggestions.jsx';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS } from '../constants/theme.js';
 const Stack = createStackNavigator();
 
 export default function UserStack() {
@@ -33,6 +37,16 @@ export default function UserStack() {
         <Stack.Screen name="ShowOutfits" options={{ headerShown: false}} component={ShowOutfits}  />
         <Stack.Screen name="EditOutfit" component={EditOutfit} options={{ headerShown: false}}/>
         <Stack.Screen name="FilterScreen" component={FilterScreen} options={{ headerShown: false}}/>
+        <Stack.Screen name="OutfitDetails" component={OutfitDetails}  options={({ navigation }) => ({
+            headerTitle: '',
+            headerStyle: { backgroundColor: COLORS.background , borderBottomColor: "red" },
+            headerLeft: () => (
+              <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+              </TouchableOpacity>
+            ),
+          })}  />
+        <Stack.Screen name="AIOutfitSuggestions" component={AIOutfitSuggestions} options={{ headerShown: false}}/>
 
       </Stack.Navigator>
     </NavigationContainer>
@@ -40,3 +54,8 @@ export default function UserStack() {
       
   );
 }
+const styles = StyleSheet.create({
+  backButton: {
+    marginLeft: 10,
+  },
+});

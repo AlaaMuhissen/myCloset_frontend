@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { View, Alert ,StyleSheet } from 'react-native';
+import { View, Alert ,StyleSheet ,Button ,TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import { fabrics } from "../../assets/data/fabrics";
 import { categories } from "../../assets/data/categories";
 import CategoryList from './CategoryList'
 import SubCategoryList from './SubCategoryList'
-import ClothesGrid from "./ClothesGrid";
-import ItemModal from "./ItemModel";
+import ClothesGrid from "./ClothesGrid.jsx";
+
 import EditClothingDetailsModal from "../AddClothes/ClothingDetailsModal";
+import { Ionicons } from "@expo/vector-icons";
+import ItemModal from "./ItemModel"
+import OutfitModal from "./OutfitModel.jsx";
 
 const ShowCategories = () => {
   const [selectedCategory, setSelectedCategory] = useState('Tops');
@@ -23,7 +26,12 @@ const ShowCategories = () => {
   const [selectedFabric, setSelectedFabric] = useState(fabrics[0].fabricName);
   const [selectedTags, setSelectedTags] = useState(['#Casual']);
   const [refreshing, setRefreshing] = useState(false);
-
+  const [selectedItems, setSelectedItems] = useState(new Set());
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [isSelectedAll, setIsSelectedAll] = useState(false);
+  const [outfit, setOutfit] = useState([]);
+  const [outfitsImg, setOutfitsImg] = useState([]);
+  const [modalOutfitVisible, setModalOutfitVisible] = useState(false);
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -55,9 +63,33 @@ const ShowCategories = () => {
     setRefreshing(true);
     fetchData().finally(() => setRefreshing(false));
   };
+  const toggleSelectItem = (itemId) => {
+    setSelectedItems(prevSelectedItems => {
+      const updatedSelectedItems = new Set(prevSelectedItems);
+      if (updatedSelectedItems.has(itemId)) {
+        updatedSelectedItems.delete(itemId);
+      } else {
+        updatedSelectedItems.add(itemId);
+      }
+      return updatedSelectedItems;
+    });
+  };
+  
+  
+  const selectAllItems = () => {
+    const allItemIds = Object.values(clothesData.get(selectedCategory)[selectedSubCategory]).map(item => item._id);
+    setSelectedItems(new Set(allItemIds));
+    setIsSelectedAll(false)
+  };
+  
+  const deselectAllItems = () => {
+    setSelectedItems(new Set());
+    setIsSelectedAll(true)
+  };
 
   const handleCardPress = (category) => {
     setSelectedCategory(category);
+    setIsSelectionMode(false)
     switch (category) {
       case "Tops":
         setSelectedSubCategory("T_shirt");
@@ -89,14 +121,25 @@ const ShowCategories = () => {
   };
 
   const handleSubCategory = (subCategory) => {
-  
     setSelectedSubCategory(subCategory);
+    setIsSelectionMode(false)
   };
 
+
   const handleImagePress = (item) => {
-    setSelectedItem(item);
-    setModalVisible(true);
+    if (isSelectionMode) {
+      toggleSelectItem(item._id);
+    } else {
+      setSelectedItem(item);
+      setModalVisible(true);
+    }
   };
+  
+  const handleLongPress = (itemId) => {
+    setIsSelectionMode(true);
+    toggleSelectItem(itemId);
+  };
+  
 
   const handleEditItem = () => {
     setEditingMode(true);
@@ -125,8 +168,7 @@ const ShowCategories = () => {
     }
     setLoading(true);
     try {
-      console.log(selectedCategory);
-      console.log(selectedSubCategory);
+     
       const temp = {
         imgUrl: selectedItem.imgUrl,
         seasons: selectedSeasons,
@@ -171,7 +213,7 @@ const ShowCategories = () => {
         { text: "Cancel", style: "cancel" },
         { text: "Yes", onPress: () => {
           setModalVisible(false);
-          setEditingMode(false); // Exit editing mode
+          setEditingMode(false); 
         }}
       ]
     );
@@ -180,6 +222,14 @@ const ShowCategories = () => {
           setModalVisible(false);
           setEditingMode(false); 
   };
+  const handleCloseOutfitModal = () => {
+    setModalOutfitVisible(false);
+    setLoading(false);
+    setIsSelectionMode(false);
+    setIsSelectedAll(false)
+    setSelectedItems(new Set());
+    
+};
 
   const handleSeasonChange = (seasonIndex) => {
     setSelectedSeasons((prevSelectedSeasons) => {
@@ -203,6 +253,83 @@ const ShowCategories = () => {
     setAllSeasonsChecked(!allSeasonsChecked);
   };
 
+  const checkItemsInOutfit = async () => {
+    try{
+      setLoading(true);
+      const data = {
+        itemsId: Array.from(selectedItems)
+      }
+      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/outfit/mohissen1234/getOutfitIdsContainingItems`, data);
+    
+
+        setOutfitsImg(response.data.outfitImg)
+        setOutfit(response.data.outfitData)
+        if(response.data.outfitImg.length === 0){
+          console.log("NOT heree")
+          handleConfirmDelete();
+        }
+        else{
+          console.log("heree")
+          setModalOutfitVisible(true);
+        }
+     
+    }catch(error){
+      console.error('Error in deleting: ' , error)
+      Alert.alert('Error', 'An error occurred while deleting outfits.');
+      setLoading(false);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      setLoading(true);
+      if(outfit.length !== 0) { 
+        console.log("dd")
+        // Loop through the outfit array to delete each outfit by season and outfitsId
+          for (const outfitItem of outfit) {
+            const { season, outfitsId } = outfitItem;
+            const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/outfit/mohissen1234/${season}`, {
+              data: { itemsId: outfitsId }
+            });
+          }}
+
+    
+      const clotheDataForDelete = { 
+        itemsId: Array.from(selectedItems)
+      }
+   
+      // After deleting outfits, delete the clothing items
+      const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234/${selectedCategory}/${selectedSubCategory}`, {
+        data: { itemsId: Array.from(selectedItems) }
+      });
+  
+      Alert.alert('Success', 'Selected items and outfits deleted successfully!');
+      setIsSelectionMode(false);
+      setIsSelectedAll(false);
+      setSelectedItems(new Set());
+      setOutfitsImg([]);
+      setOutfit([])
+      fetchData(); 
+   
+    } catch (error) {
+      console.error('Error in deleting: ', error);
+      Alert.alert('Error', 'An error occurred while deleting items and outfits.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+
+  const handleCancelSelection = () => {
+    setIsSelectionMode(false);
+    setSelectedItems(new Set());
+  };
+
+  const handleEnableSelectionMode = () => {
+    setIsSelectionMode(true);
+  };
+ 
+
   return (
     <>
       <CategoryList selectedCategory={selectedCategory} handleCardPress={handleCardPress} withIcon={true}/>
@@ -211,15 +338,33 @@ const ShowCategories = () => {
           <SubCategoryList subOptions={selectedCategoryData.subOptions} handleSubCategory={handleSubCategory} isSmall={false} />
         )}
       </View>
-      <ClothesGrid
-        loading={loading}
-        clothesData={clothesData}
-        selectedCategory={selectedCategory}
-        selectedSubCategory={selectedSubCategory}
-        handleImagePress={handleImagePress}
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-      />
+      {!isSelectionMode && <Button title="Select" onPress={handleEnableSelectionMode} />}
+      {isSelectionMode && <View style={styles.buttonContainer}>
+      { isSelectedAll ? <Button title="Select All" onPress={() => selectAllItems()} />: 
+     <Button title="Deselect All" onPress={() => deselectAllItems()} />
+      }
+       <TouchableOpacity onPress={checkItemsInOutfit}>
+        <Ionicons name="trash-outline" color={'red'} size={24} style={styles.icon} />
+        </TouchableOpacity>
+        
+        {isSelectedAll && <Button title="Cancel" onPress={handleCancelSelection} />} 
+       
+      </View>
+}
+          <ClothesGrid
+            loading={loading}
+            clothesData={clothesData}
+            selectedCategory={selectedCategory}
+            selectedSubCategory={selectedSubCategory}
+            handleImagePress={handleImagePress}
+            handleLongPress={handleLongPress}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            selectedItems={selectedItems}
+            isSelectionMode={isSelectionMode}
+          />
+
+
       {selectedItem && !editingMode && (
         <ItemModal
           visible={modalVisible}
@@ -230,6 +375,15 @@ const ShowCategories = () => {
           handleCloseModal={handleCloseItemModal}
         />
       )}
+
+    {modalOutfitVisible && (
+            <OutfitModal
+              visible={modalOutfitVisible}
+              outfitImgArray={outfitsImg}
+              handleCloseModal={handleCloseOutfitModal}
+              handleConfirmDelete = {handleConfirmDelete}
+            />
+          )}
       {selectedItem && editingMode && (
         <EditClothingDetailsModal
           visible={modalVisible}
@@ -347,6 +501,11 @@ const styles = StyleSheet.create({
   colorsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 10,
   },
   colorBox: {
     width: 24,

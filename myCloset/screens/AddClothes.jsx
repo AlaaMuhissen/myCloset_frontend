@@ -139,8 +139,7 @@ const AddClothes = () => {
     }
     setLoading(true);
     try {
-      console.log(selectedCategory)
-      console.log(selectedSubCategory)
+  
       const temp = {
         imgUrl: result.image_without_background_url,
         seasons: selectedSeasons,
@@ -203,7 +202,7 @@ const AddClothes = () => {
   
 
   const handleAllSeasonsChange = () => {
-    const newValue = allSeasonsChecked ? 1 : 0;
+    const newValue = allSeasonsChecked ? 0 : 1;
     setSelectedSeasons([newValue, newValue, newValue, newValue]);
     setAllSeasonsChecked(!allSeasonsChecked);
   };

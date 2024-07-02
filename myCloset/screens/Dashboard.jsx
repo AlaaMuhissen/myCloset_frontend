@@ -6,7 +6,7 @@ import { getAuth } from 'firebase/auth';
 import Header from '../components/Header';
 import { getIconComponent } from '../components/Logics/getIconComponent';
 import InfoCard from '../components/Home/InfoCard';
-import ShowCategories from '../components/userCategories/ShowCategories';
+import ShowCategories from '../components/User_Categories/ShowCategories';
 import GetWeather from '../components/Logics/GetWeather';
 import SearchBar from '../components/Home/SearchBar';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -18,7 +18,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import Modal from 'react-native-modal';
 import {cities} from '../assets/data/cities'; 
 import { Dropdown } from 'react-native-element-dropdown';
-
+import { Skeleton } from 'moti/skeleton';
 const auth = getAuth();
 const Dashboard = () => {
   const { user } = useAuthentication();
@@ -26,12 +26,14 @@ const Dashboard = () => {
   const [location, setLocation] = useState(null);
   const [city, setCity] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         Alert.alert('Permission to access location was denied');
+        setIsLoading(false);
         return;
       }
 
@@ -47,6 +49,8 @@ const Dashboard = () => {
       if (reverseGeocode.length > 0) {
         setCity(reverseGeocode[0].city);
       }
+
+      setIsLoading(false);
     })();
   }, []);
 
@@ -59,7 +63,11 @@ const Dashboard = () => {
       <ScrollView style={styles.container}>
         <Header name={"Hi Fashionista"} icon={'calendar'} />
         <View style={{ marginVertical: 30, marginHorizontal: 15, gap: 20 }}>
-          <InfoCard />
+          {isLoading ? (
+            <Skeleton height={50} width={350} colorMode="dark" />
+          ) : (
+            <InfoCard />
+          )}
           <TouchableOpacity onPress={() => handleSearch()}>
             <SearchBar />
           </TouchableOpacity>
@@ -79,7 +87,11 @@ const Dashboard = () => {
           <View style={{ gap: 20 }}>
             <Text style={{ fontSize: 18, color: "#fff", fontWeight: "bold" }}>We made these Outfits for you</Text>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <AIOutfitSuggestions />
+              {isLoading ? (
+                <Skeleton width={300} height={200} colorMode="dark" />
+              ) : (
+                <AIOutfitSuggestions />
+              )}
             </View>
           </View>
         </View>
@@ -87,7 +99,6 @@ const Dashboard = () => {
 
       <Modal isVisible={modalVisible} onBackdropPress={() => setModalVisible(false)}>
         <View style={styles.modalContent}>
-          {/* <Text style={styles.modalTitle}>Select a City</Text> */}
           <Dropdown
               style={styles.dropdown}
               data={cities}
