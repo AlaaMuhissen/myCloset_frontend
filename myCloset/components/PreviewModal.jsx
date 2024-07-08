@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Image, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback } from 'react-native';
+import { Image as CachedImage } from 'react-native-expo-image-cache';
 
 const PreviewModal = ({ visible, imgURL, content, onClose }) => {
-   
   return (
     <Modal
       animationType="fade"
@@ -10,20 +10,24 @@ const PreviewModal = ({ visible, imgURL, content, onClose }) => {
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={styles.previewContainer}>
-        <View>
-          <Image source={{uri : imgURL}} style={styles.previewImage} />
-          <TouchableOpacity
-            style={styles.previewCloseButton}
-            onPress={onClose}
-          >
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 0 }}>
-              <Text style={styles.previewCloseText}>×</Text>
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={styles.previewContainer}>
+          <TouchableWithoutFeedback>
+            <View>
+              <CachedImage uri={imgURL} style={styles.previewImage} />
+              <TouchableOpacity
+                style={styles.previewCloseButton}
+                onPress={onClose}
+              >
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 0 }}>
+                  <Text style={styles.previewCloseText}>×</Text>
+                </View>
+              </TouchableOpacity>
+              {content && <Text style={styles.previewText}>{content}</Text>}
             </View>
-          </TouchableOpacity>
-       {content && <Text style={styles.previewText}>{content}</Text>}
+          </TouchableWithoutFeedback>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };

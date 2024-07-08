@@ -57,11 +57,14 @@ const Dashboard = () => {
   const handleSearch = () => {
     navigation.navigate('FilterScreen');
   };
+  const handleShowCalendar = () => {
+    navigation.navigate('historyScreen');
+  };
 
   return (
     <>
       <ScrollView style={styles.container}>
-        <Header name={"Hi Fashionista"} icon={'calendar'} />
+        <Header name={"Hi Fashionista"} icon={'calendar'} onIconPress={handleShowCalendar}/>
         <View style={{ marginVertical: 30, marginHorizontal: 15, gap: 20 }}>
           {isLoading ? (
             <Skeleton height={50} width={350} colorMode="dark" />
