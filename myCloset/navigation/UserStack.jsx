@@ -20,6 +20,7 @@ import AIOutfitSuggestions from '../components/AIOutfitSuggestions.jsx';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme.js';
 import HistoryCalendar from '../components/Home/HistoryCalendar.jsx';
+import FavoriteOutfit from '../screens/FavoriteOutfit.jsx';
 const Stack = createStackNavigator();
 
 export default function UserStack() {
@@ -30,6 +31,7 @@ export default function UserStack() {
       <Stack.Navigator>
         <Stack.Screen name="tab" options={{ headerShown: false}} component={TabNavigator} />
         <Stack.Screen name="home" options={{ headerShown: false}}component={Dashboard} />
+        <Stack.Screen name="favoriteOutfits" options={{ headerShown: false}}component={FavoriteOutfit} />
         <Stack.Screen name="historyScreen" options={{ headerShown: false}} component={HistoryCalendar} />
         <Stack.Screen name="AddClothes" options={{ headerShown: false}} component={AddClothes} />
         <Stack.Screen name="userCategory" options={{ headerShown: false}} component={UserCategory} />

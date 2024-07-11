@@ -63,7 +63,7 @@ const OutfitDetails = ({ route }) => {
             { text: 'Stay in this Page'},
             { text: 'Show the fav screen', onPress: () => {
               
-              handleCancel();navigation.navigate('userCategory') }
+            navigation.navigate('favoriteOutfits') }
             },
           ]
         );

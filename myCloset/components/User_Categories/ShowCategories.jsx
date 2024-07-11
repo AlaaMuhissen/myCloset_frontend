@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { View, Alert ,StyleSheet ,Button ,TouchableOpacity } from 'react-native';
+import { View, Alert ,StyleSheet ,Button ,TouchableOpacity ,Image ,Text} from 'react-native';
 import axios from 'axios';
 import { fabrics } from "../../assets/data/fabrics";
 import { categories } from "../../assets/data/categories";
 import CategoryList from './CategoryList'
 import SubCategoryList from './SubCategoryList'
 import ClothesGrid from "./ClothesGrid.jsx";
-
+import ClothePlaceHolder from '../../assets/default-image-clothe.jpg'
 import EditClothingDetailsModal from "../AddClothes/ClothingDetailsModal";
 import { Ionicons } from "@expo/vector-icons";
 import ItemModal from "./ItemModel"
 import OutfitModal from "./OutfitModel.jsx";
+import { useNavigation } from "@react-navigation/native";
+
 
 const ShowCategories = () => {
   const [selectedCategory, setSelectedCategory] = useState('Tops');
@@ -32,11 +34,14 @@ const ShowCategories = () => {
   const [outfit, setOutfit] = useState([]);
   const [outfitsImg, setOutfitsImg] = useState([]);
   const [modalOutfitVisible, setModalOutfitVisible] = useState(false);
+  const navigation = useNavigation();
+
   const fetchData = async () => {
     try {
       setLoading(true);
       const response = await axios.get('https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234');
       setClothesData(new Map(Object.entries(response.data.categories)));
+      console.log("clothe data " , clothesData)
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -54,8 +59,6 @@ const ShowCategories = () => {
       setSelectedSeasons(selectedItem.seasons);
       setSelectedTags(selectedItem.tags);
       setColorPalette(selectedItem.colors);
-      console.log("categoryy", selectedCategory);
-      console.log("subCategoryy", selectedSubCategory);
     }
   }, [selectedItem]);
 
@@ -176,7 +179,7 @@ const ShowCategories = () => {
         fabric: selectedFabric,
         tags: selectedTags
       };
-      console.log(temp);
+  
       const response = await axios.put(`https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234/${selectedCategory}/${selectedSubCategory}/${selectedItem._id}`, {
         seasons: selectedSeasons,
         colors: colorPalette,
@@ -188,7 +191,6 @@ const ShowCategories = () => {
           'Authorization': 'Bearer YOUR_AUTH_TOKEN', 
         }
       });
-      console.log(response.data);
       setModalVisible(false);
       Alert.alert(
         'Success',
@@ -265,11 +267,11 @@ const ShowCategories = () => {
         setOutfitsImg(response.data.outfitImg)
         setOutfit(response.data.outfitData)
         if(response.data.outfitImg.length === 0){
-          console.log("NOT heree")
+   
           handleConfirmDelete();
         }
         else{
-          console.log("heree")
+       
           setModalOutfitVisible(true);
         }
      
@@ -284,7 +286,7 @@ const ShowCategories = () => {
     try {
       setLoading(true);
       if(outfit.length !== 0) { 
-        console.log("dd")
+      
         // Loop through the outfit array to delete each outfit by season and outfitsId
           for (const outfitItem of outfit) {
             const { season, outfitsId } = outfitItem;
@@ -338,31 +340,48 @@ const ShowCategories = () => {
           <SubCategoryList subOptions={selectedCategoryData.subOptions} handleSubCategory={handleSubCategory} isSmall={false} />
         )}
       </View>
-      {!isSelectionMode && <Button title="Select" onPress={handleEnableSelectionMode} />}
-      {isSelectionMode && <View style={styles.buttonContainer}>
-      { isSelectedAll ? <Button title="Select All" onPress={() => selectAllItems()} />: 
-     <Button title="Deselect All" onPress={() => deselectAllItems()} />
-      }
-       <TouchableOpacity onPress={checkItemsInOutfit}>
-        <Ionicons name="trash-outline" color={'red'} size={24} style={styles.icon} />
+
+      {clothesData.length !== 0 && Object.keys(clothesData.get(selectedCategory)[selectedSubCategory]).length !== 0 ? (
+  <>
+    {!isSelectionMode && <Button title="Select" onPress={handleEnableSelectionMode} />}
+    {isSelectionMode && (
+      <View style={styles.buttonContainer}>
+        {isSelectedAll ? (
+          <Button title="Select All" onPress={() => selectAllItems()} />
+        ) : (
+          <Button title="Deselect All" onPress={() => deselectAllItems()} />
+        )}
+        <TouchableOpacity onPress={checkItemsInOutfit}>
+          <Ionicons name="trash-outline" color={'red'} size={24} style={styles.icon} />
         </TouchableOpacity>
-        
-        {isSelectedAll && <Button title="Cancel" onPress={handleCancelSelection} />} 
-       
+        {isSelectedAll && <Button title="Cancel" onPress={handleCancelSelection} />}
       </View>
-}
-          <ClothesGrid
-            loading={loading}
-            clothesData={clothesData}
-            selectedCategory={selectedCategory}
-            selectedSubCategory={selectedSubCategory}
-            handleImagePress={handleImagePress}
-            handleLongPress={handleLongPress}
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            selectedItems={selectedItems}
-            isSelectionMode={isSelectionMode}
-          />
+    )}
+    <ClothesGrid
+      loading={loading}
+      clothesData={clothesData}
+      selectedCategory={selectedCategory}
+      selectedSubCategory={selectedSubCategory}
+      handleImagePress={handleImagePress}
+      handleLongPress={handleLongPress}
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+      selectedItems={selectedItems}
+      isSelectionMode={isSelectionMode}
+    />
+  </>
+) : (
+  <View style={styles.emptyStateContainer}>
+    <Image 
+     source = {ClothePlaceHolder}
+     style={styles.illustration} />
+    <Text style={styles.emptyStateText}> Your wardrobe is empty. Add your first item to start building your collection!</Text>
+    <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddClothes')}>
+      <Ionicons name="add" size={24} color="#fff" />
+      <Text style={styles.addButtonText}>Add Clothes</Text>
+    </TouchableOpacity>
+  </View>
+)}
 
 
       {selectedItem && !editingMode && (
@@ -554,6 +573,38 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+  },
+  emptyStateContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:"#fff",
+    borderRadius :10,
+    padding: 20,
+   
+  },
+  illustration: {
+    width : 150,
+    height :150,
+    marginBottom: 20,
+  },
+  emptyStateText: {
+    fontSize: 18,
+    color: "#000",
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ff6f61',
+    padding: 10,
+    borderRadius: 5,
+  },
+  addButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    marginLeft: 10,
   },
 });
 

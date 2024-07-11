@@ -87,7 +87,7 @@ const SettingsScreen = () => {
      
       
       {renderSection('Section 2', [
-        { text: 'My Style', icon: 'shirt-outline', screen: 'MyStyleScreen' },
+        { text: 'My Style', icon: 'shirt-outline', screen: 'favoriteOutfits' },
         { text: 'Alerts', icon: 'notifications-outline', screen: 'AlertsScreen' },
         { text: 'Visuals', icon: 'eye-outline', screen: 'VisualsScreen' }
       ])}

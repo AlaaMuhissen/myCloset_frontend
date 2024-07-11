@@ -88,14 +88,13 @@ const Dashboard = () => {
           </View>
           <GetWeather city={city} />
           <View style={{ gap: 20 }}>
-            <Text style={{ fontSize: 18, color: "#fff", fontWeight: "bold" }}>We made these Outfits for you</Text>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               {isLoading ? (
+             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}> 
                 <Skeleton width={300} height={200} colorMode="dark" />
+                 </View>
               ) : (
                 <AIOutfitSuggestions />
               )}
-            </View>
           </View>
         </View>
       </ScrollView>
