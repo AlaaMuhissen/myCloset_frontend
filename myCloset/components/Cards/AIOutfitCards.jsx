@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { COLORS, FONT } from '../../constants';
 
 const AIOutfitCards = ({ item, index }) => {
   const navigation = useNavigation();
@@ -27,7 +28,7 @@ const AIOutfitCards = ({ item, index }) => {
           onPress={() => navigation.navigate('OutfitDetails', { item })}
         >
           <View style={styles.iconContainer}>
-            <FontAwesome name="eye" size={24} color="#fff" />
+            <FontAwesome name="eye" size={24} color={COLORS.white} />
           </View>
           <Text style={styles.text}>View Details</Text>
         </TouchableOpacity>
@@ -38,12 +39,12 @@ const AIOutfitCards = ({ item, index }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.lightWhite,
     borderRadius: 8,
     paddingBottom: 40,
     paddingTop: 20,
     gap: 20,
-    shadowColor: "#000",
+    shadowColor: COLORS.gray2,
     shadowOffset: {
       width: 0,
       height: 3,
@@ -57,11 +58,12 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   header: {
-    color: "#222",
+    color: COLORS.primary,
     fontSize: 28,
     fontWeight: 'bold',
+    fontFamily: FONT.bold,
     paddingLeft: 20,
-    paddingTop: 20
+    paddingTop: 20,
   },
   btnContainer: {
     flexDirection: 'row',
@@ -69,11 +71,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#363636',
-    backgroundColor: '#242424',
+    borderColor: COLORS.primary,
+    backgroundColor: COLORS.secondary,
     paddingVertical: 10,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: COLORS.gray2,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
@@ -85,8 +87,9 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    color: '#fff',
+    color: COLORS.white,
     fontWeight: 'bold',
+    fontFamily: FONT.bold,
   },
 });
 

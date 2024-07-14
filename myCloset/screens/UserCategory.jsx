@@ -3,6 +3,7 @@ import { ScrollView, View , StyleSheet } from 'react-native'
 import ShowCategories from '../components/User_Categories/ShowCategories'
 import Header from '../components/Header'
 import { useNavigation } from '@react-navigation/native'
+import { COLORS } from '../constants'
 
 const UserCategory = () => {
   const navigation = useNavigation();
@@ -12,7 +13,7 @@ const UserCategory = () => {
 
   return (
     <View  style={styles.container}>
-         <View style = {{ marginVertical:30 ,marginHorizontal: 15 ,gap :20}}>
+         <View >
        <Header name={"My Wardrobe"} icon={'search'} onIconPress={handleSearch}/>
         <ScrollView>
             <ShowCategories />
@@ -24,8 +25,8 @@ const UserCategory = () => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#090909',
-      gap : 20,
+      backgroundColor: COLORS.background,
+      paddingHorizontal: 8,
     }
   });
 export default UserCategory

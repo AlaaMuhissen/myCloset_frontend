@@ -1,20 +1,26 @@
 const COLORS = {
   primary: "#363636",
   secondary: "#242424",
-  tertiary: "#ffb845",
-  background: "#090909",
-  gray: "#83829A",
-  gray2: "#C1C0C8",
-
-  white: "#F3F4F8",
-  lightWhite: "#FAFAFC",
+  tertiary: "#FDAD9C",
+  background: "#FDFDFD",
+  gray: "#A8A8A8", // Neutral Light Gray
+  gray2: "#E8E8E8", // Very Light Gray
+  white: "#FFFFFF",         // White
+  lightWhite: "#F5F5F5",    // Whisper Grey
+  error: "#B00020"          // Strong Red
 };
+
+// primary: "#434848",       // Electric Violet
+// secondary: "#888F8F",     // Tiffany Blue
+// tertiary: "",      // Razzmatazz
+// background: "#FDFDFD",
 
 const FONT = {
-  regular: "DMRegular",
-  medium: "DMMedium",
-  bold: "DMBold",
+  regular: "Poppins-Regular",
+  medium: "Poppins-Medium",
+  bold: "Poppins-Bold",
 };
+
 
 const SIZES = {
   xSmall: 10,

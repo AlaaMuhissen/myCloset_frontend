@@ -10,6 +10,7 @@ import TagFilter from '../components/FilterCloset/TagFilter';
 import ColorFilter from '../components/FilterCloset/ColorFilter';
 import FilterModal from '../components/FilterCloset/FilterModal';
 import { styles } from '../components/FilterCloset/styles';
+import { useAuthentication } from '../utils/hooks/useAuthentication';
 
 const FilterScreen = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -27,13 +28,16 @@ const FilterScreen = () => {
   const [isSeasonCollapsed, setIsSeasonCollapsed] = useState(true);
   const [isTagCollapsed, setIsTagCollapsed] = useState(true);
   const [isColorCollapsed, setIsColorCollapsed] = useState(true);
-
+  const { user } = useAuthentication();
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
-        const response = await axios.get('https://mycloset-backend-hnmd.onrender.com/api/closet/getAllColors/mohissen1234');
-        setAllColors(response.data);
+        if(user){
+
+          setLoading(true);
+          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/getAllColors/${user.uid}`);
+          setAllColors(response.data);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -92,7 +96,7 @@ const FilterScreen = () => {
         tags: selectedTags,
         fabric: selectedFabric
       }
-      const response = await axios.post('https://mycloset-backend-hnmd.onrender.com/api/closet/filter/mohissen1234', data, {
+      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/closet/filter/${user.uid}`, data, {
         headers: {
           'Content-Type': 'application/json',
         }

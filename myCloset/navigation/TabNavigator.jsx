@@ -8,8 +8,9 @@ import AddClothes from '../screens/AddClothes';
 import AddOutfit from '../screens/AddOutfit';
 import UserCategory from '../screens/UserCategory';
 import SettingsScreen from '../screens/SettingsScreen';
-import { FontAwesome } from '@expo/vector-icons';
 import ShowOutfits from '../screens/ShowOutfits';
+import { COLORS } from '../constants';
+
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
@@ -22,14 +23,14 @@ const TabNavigator = () => {
   };
 
   return (
-    <View style={{ flex: 1 , backgroundColor: '#090909'}}>
+    <View style={{ flex: 1, backgroundColor: COLORS.background }}>
       <Modal
         animationType="fade"
         transparent={true}
         visible={showDropdown}
         onRequestClose={() => setShowDropdown(false)}
       >
-        <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center',backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+        <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
           <AddDropdown onSelect={handleComponentSelect} />
         </View>
       </Modal>
@@ -39,17 +40,17 @@ const TabNavigator = () => {
           headerShown: false,
           tabBarShowLabel: false,
           tabBarStyle: {
-            backgroundColor: '#363636',
-            borderRadius:40
+            backgroundColor: COLORS.primary,
+            borderRadius: 40,
+            marginTop:35,
+            zIndex:100
           },
-          tabBarInactiveTintColor: '#fff',
-          tabBarActiveTintColor: '#ffb845',
-          
+          tabBarInactiveTintColor: COLORS.white,
+          tabBarActiveTintColor: COLORS.tertiary,
         }}
       >
-        
         <Tab.Screen
-          name="dashboard"
+          name="Dashboard"
           component={Dashboard}
           options={{
             tabBarIcon: ({ color, size }) => (
@@ -58,47 +59,26 @@ const TabNavigator = () => {
             headerShown: false,
           }}
         />
-      <Tab.Screen
+        <Tab.Screen
           name="Categories"
           component={UserCategory}
           options={{
-            tabBarIcon: ({color, size}) => (
+            tabBarIcon: ({ color, size }) => (
               <Ionicons name="shirt" color={color} size={size} />
             ),
             headerShown: false,
           }}
         />
-       
         <Tab.Screen
           name="AddTab"
           options={{
             tabBarIcon: ({ color, size }) => (
               <TouchableOpacity
-                style={{
-                  position: 'absolute',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 10,
-                  padding: 10,
-                  width: 75,
-                  height: 75,
-                  top: -35,
-                  backgroundColor: "#090909",
-                  borderRadius: 40,
-                }}
+                style={styles.addButton}
                 onPress={() => setShowDropdown(true)}
               >
-                <View
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: 60,
-                    height: 60,
-                    backgroundColor: "#242424",
-                    borderRadius: 50
-                  }}
-                >
-                <Ionicons name="add-outline" color={color} size={size * 1.8} />
+                <View style={styles.addIconContainer}>
+                  <Ionicons name="add-outline" color={color} size={size * 1.8} />
                 </View>
               </TouchableOpacity>
             ),
@@ -112,19 +92,17 @@ const TabNavigator = () => {
           component={ShowOutfits}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="bar-chart" color={color} size={size} />
+              <Ionicons name="body-sharp" color={color} size={size} />
             ),
           }}
         />
-        
         <Tab.Screen
           name="Settings"
           component={SettingsScreen}
           options={{
-            tabBarIcon: ({color, size}) => (
+            tabBarIcon: ({ color, size }) => (
               <Ionicons name="cog" color={color} size={size} />
             ),
-            
           }}
         />
       </Tab.Navigator>
@@ -133,3 +111,26 @@ const TabNavigator = () => {
 };
 
 export default TabNavigator;
+
+const styles = {
+  addButton: {
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 100,
+    padding: 10,
+    width: 75,
+    height: 75,
+    top: -35,
+    backgroundColor: COLORS.background,
+    borderRadius: 40,
+  },
+  addIconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 60,
+    height: 60,
+    backgroundColor: COLORS.secondary,
+    borderRadius: 50,
+  },
+};

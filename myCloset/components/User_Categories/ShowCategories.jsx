@@ -12,6 +12,8 @@ import { Ionicons } from "@expo/vector-icons";
 import ItemModal from "./ItemModel"
 import OutfitModal from "./OutfitModel.jsx";
 import { useNavigation } from "@react-navigation/native";
+import { COLORS ,FONT } from "../../constants";
+import { useAuthentication } from "../../utils/hooks/useAuthentication.js";
 
 
 const ShowCategories = () => {
@@ -35,11 +37,11 @@ const ShowCategories = () => {
   const [outfitsImg, setOutfitsImg] = useState([]);
   const [modalOutfitVisible, setModalOutfitVisible] = useState(false);
   const navigation = useNavigation();
-
+  const { user } = useAuthentication();
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234');
+      const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}`);
       setClothesData(new Map(Object.entries(response.data.categories)));
       console.log("clothe data " , clothesData)
     } catch (error) {
@@ -51,7 +53,7 @@ const ShowCategories = () => {
 
   useEffect(() => {
     fetchData();
-  }, [selectedCategory]);
+  }, [selectedCategory ,user]);
 
   useEffect(() => {
     if (selectedItem) {
@@ -180,7 +182,7 @@ const ShowCategories = () => {
         tags: selectedTags
       };
   
-      const response = await axios.put(`https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234/${selectedCategory}/${selectedSubCategory}/${selectedItem._id}`, {
+      const response = await axios.put(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}/${selectedCategory}/${selectedSubCategory}/${selectedItem._id}`, {
         seasons: selectedSeasons,
         colors: colorPalette,
         fabric: selectedFabric,
@@ -261,7 +263,7 @@ const ShowCategories = () => {
       const data = {
         itemsId: Array.from(selectedItems)
       }
-      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/outfit/mohissen1234/getOutfitIdsContainingItems`, data);
+      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/getOutfitIdsContainingItems`, data);
     
 
         setOutfitsImg(response.data.outfitImg)
@@ -290,7 +292,7 @@ const ShowCategories = () => {
         // Loop through the outfit array to delete each outfit by season and outfitsId
           for (const outfitItem of outfit) {
             const { season, outfitsId } = outfitItem;
-            const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/outfit/mohissen1234/${season}`, {
+            const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/${season}`, {
               data: { itemsId: outfitsId }
             });
           }}
@@ -301,7 +303,7 @@ const ShowCategories = () => {
       }
    
       // After deleting outfits, delete the clothing items
-      const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234/${selectedCategory}/${selectedSubCategory}`, {
+      const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}/${selectedCategory}/${selectedSubCategory}`, {
         data: { itemsId: Array.from(selectedItems) }
       });
   
@@ -444,7 +446,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 15,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: COLORS.gray2,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -462,10 +464,10 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '90%',
-    backgroundColor: 'white',
+    backgroundColor: COLORS.white,
     borderRadius: 20,
     padding: 20,
-    shadowColor: '#000',
+    shadowColor: COLORS.gray2,
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
@@ -483,8 +485,9 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: COLORS.primary,
     marginBottom: 20,
+    fontFamily: FONT.bold,
   },
   modalDetailContainer: {
     width: '100%',
@@ -496,12 +499,14 @@ const styles = StyleSheet.create({
   modalLabel: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#555',
+    color: COLORS.primary,
     marginRight: 20,
+    fontFamily: FONT.bold,
   },
   modalValue: {
     fontSize: 14,
-    color: '#777',
+    color: COLORS.gray,
+    fontFamily: FONT.regular,
   },
   seasonsContainer: {
     flexDirection: 'row',
@@ -511,11 +516,13 @@ const styles = StyleSheet.create({
   seasonText: {
     fontSize: 14,
     marginRight: 10,
-    color: '#888',
+    color: COLORS.gray,
+    fontFamily: FONT.regular,
   },
   activeSeason: {
-    color: '#333',
+    color: COLORS.primary,
     fontWeight: 'bold',
+    fontFamily: FONT.bold,
   },
   colorsContainer: {
     flexDirection: 'row',
@@ -532,7 +539,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: COLORS.gray2,
   },
   tagsContainer: {
     flexDirection: 'row',
@@ -543,10 +550,11 @@ const styles = StyleSheet.create({
     marginRight: 5,
     marginBottom: 5,
     fontSize: 14,
-    color: '#777',
+    color: COLORS.gray,
+    fontFamily: FONT.regular,
   },
   closeButton: {
-    backgroundColor: '#FD3A69',
+    backgroundColor: COLORS.tertiary,
     padding: 15,
     borderRadius: 30,
     alignItems: 'center',
@@ -554,9 +562,10 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   closeButtonText: {
-    color: 'white',
+    color: COLORS.white,
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: FONT.bold,
   },
   editIconContainer: {
     position: 'absolute',
@@ -578,34 +587,36 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:"#fff",
-    borderRadius :10,
+    backgroundColor: COLORS.white,
+    borderRadius: 10,
     padding: 20,
-   
   },
   illustration: {
-    width : 150,
-    height :150,
+    width: 150,
+    height: 150,
     marginBottom: 20,
   },
   emptyStateText: {
     fontSize: 18,
-    color: "#000",
+    color: COLORS.primary,
     textAlign: 'center',
     marginBottom: 20,
+    fontFamily: FONT.regular,
   },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ff6f61',
+    backgroundColor: COLORS.tertiary,
     padding: 10,
     borderRadius: 5,
   },
   addButtonText: {
-    color: '#fff',
+    color: COLORS.white,
     fontSize: 16,
     marginLeft: 10,
+    fontFamily: FONT.bold,
   },
 });
+
 
 export default ShowCategories;

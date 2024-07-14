@@ -12,6 +12,7 @@ import { uploadImage } from '../config/cloudinary';
 import { COLORS } from '../constants';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
+import { useAuthentication } from '../utils/hooks/useAuthentication.js';
 const { height } = Dimensions.get('window');
 
 const AddOutfit = () => {
@@ -27,7 +28,7 @@ const AddOutfit = () => {
   const [captureMode, setCaptureMode] = useState(false);
   const receivingZoneRef = useRef();
   const [refreshing, setRefreshing] = useState(false);
-
+  const { user } = useAuthentication();
   const resetPosition = (id) => {
     setPositions(prevPositions => ({
       ...prevPositions,
@@ -50,9 +51,12 @@ const AddOutfit = () => {
 
   const fetchData = async () => {
     try {
-      setLoading(true);
-      const response = await axios.get('https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234');
-      setClothesData(new Map(Object.entries(response.data.categories)));
+      if(user){
+
+        setLoading(true);
+        const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}`);
+        setClothesData(new Map(Object.entries(response.data.categories)));
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -61,7 +65,7 @@ const AddOutfit = () => {
   };
   useEffect(() => {
     fetchData();
-  }, [selectedCategory]);
+  }, [selectedCategory, user]);
 
   const selectedCategoryData = categories.find((category) => category.label === selectedCategory);
 
@@ -132,7 +136,7 @@ const AddOutfit = () => {
         };
 
         const response = await axios.post(
-          'https://mycloset-backend-hnmd.onrender.com/api/outfit/mohissen1234/Summer',
+          `https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/Summer`,
           state,
           { headers: { 'Content-Type': 'application/json' } }
         );
@@ -164,7 +168,7 @@ const AddOutfit = () => {
   };
   return (
     <View style={styles.container}> 
-      <Header name={"Make your magic!"} icon={'save'} onIconPress={captureAndUpload} />
+      <Header name={"Make your magic!"} icon={'bookmark-sharp'} onIconPress={captureAndUpload} />
       <DraxProvider>
         <View>
           <View style={styles.receivingZoneContainer}>

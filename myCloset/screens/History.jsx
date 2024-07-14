@@ -3,6 +3,7 @@ import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 
 import HistoryCalendar from '../components/Home/HistoryCalendar';
+import { COLORS } from '../constants';
 
 export const History = () => {
   return (
@@ -15,7 +16,7 @@ export const History = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.background,
   },
 });
 

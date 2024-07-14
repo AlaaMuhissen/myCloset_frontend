@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getAuth, signOut } from 'firebase/auth';
 import { useAuthentication } from '../utils/hooks/useAuthentication';
+import { COLORS, FONT } from '../constants';
 
 const auth = getAuth();
 
@@ -16,7 +17,7 @@ export default function Header({ name, icon, onIconPress }) {
           {name}
         </Text>
         <TouchableOpacity onPress={onIconPress}>
-          <Ionicons name={icon} color={'#fff'} size={28} />
+          <Ionicons name={icon} color={COLORS.primary} size={28} />
         </TouchableOpacity>
       </View>
     </View>
@@ -25,8 +26,9 @@ export default function Header({ name, icon, onIconPress }) {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     paddingVertical: 20,
+
   },
   textContainer: {
     flexDirection: 'row',
@@ -35,8 +37,8 @@ const styles = StyleSheet.create({
   },
   greetingText: {
     fontSize: 24,
-    color: '#fff',
-    fontWeight: 'bold',
+    color: COLORS.primary,
+    fontFamily: FONT.bold,
     marginBottom: 5
   }
 });

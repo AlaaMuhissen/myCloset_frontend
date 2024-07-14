@@ -21,18 +21,21 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme.js';
 import HistoryCalendar from '../components/Home/HistoryCalendar.jsx';
 import FavoriteOutfit from '../screens/FavoriteOutfit.jsx';
+import StatisticsScreen from '../screens/StatisticsScreen.jsx';
+import EditProfileScreen from '../screens/EditProfileScreen.jsx';
 const Stack = createStackNavigator();
 
 export default function UserStack() {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#090909' , color: '#fff' }}>
-        <StatusBar barStyle="light-content" backgroundColor="#6a51ae" />
-    <NavigationContainer>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background , color: '#000' }}>
+        <StatusBar barStyle='dark-content' backgroundColor="#6a51ae" />
+
       <Stack.Navigator>
         <Stack.Screen name="tab" options={{ headerShown: false}} component={TabNavigator} />
-        <Stack.Screen name="home" options={{ headerShown: false}}component={Dashboard} />
+        <Stack.Screen name="Home" options={{ headerShown: false}}component={Dashboard} />
         <Stack.Screen name="favoriteOutfits" options={{ headerShown: false}}component={FavoriteOutfit} />
         <Stack.Screen name="historyScreen" options={{ headerShown: false}} component={HistoryCalendar} />
+        <Stack.Screen name="StatisticsScreen" options={{ headerShown: false}} component={StatisticsScreen} />
         <Stack.Screen name="AddClothes" options={{ headerShown: false}} component={AddClothes} />
         <Stack.Screen name="userCategory" options={{ headerShown: false}} component={UserCategory} />
         <Stack.Screen name="AddOutfit" options={{ headerShown: false}} component={AddOutfit} />
@@ -41,7 +44,8 @@ export default function UserStack() {
         <Stack.Screen name="ShowOutfits" options={{ headerShown: false}} component={ShowOutfits}  />
         <Stack.Screen name="EditOutfit" component={EditOutfit} options={{ headerShown: false}}/>
         <Stack.Screen name="FilterScreen" component={FilterScreen} options={{ headerShown: false}}/>
-        <Stack.Screen name="OutfitDetails" component={OutfitDetails}  options={({ navigation }) => ({
+        <Stack.Screen name="OutfitDetails" component={OutfitDetails} options={{ headerShown: false}}/>
+        {/* <Stack.Screen name="OutfitDetails" component={OutfitDetails}  options={({ navigation }) => ({
             headerTitle: '',
             headerStyle: { backgroundColor: COLORS.background , borderBottomColor: "red" },
             headerLeft: () => (
@@ -49,11 +53,11 @@ export default function UserStack() {
                 <Ionicons name="arrow-back" size={24} color="#fff" />
               </TouchableOpacity>
             ),
-          })}  />
+          })}  /> */}
         <Stack.Screen name="AIOutfitSuggestions" component={AIOutfitSuggestions} options={{ headerShown: false}}/>
-
+        <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} options={{ headerShown: false}}/>
       </Stack.Navigator>
-    </NavigationContainer>
+
     </SafeAreaView>
       
   );

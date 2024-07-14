@@ -11,7 +11,7 @@ const CategoryFilter = ({ selectedCategories, handleCategorySelect, isCategoryCo
     <TouchableOpacity onPress={() => setIsCategoryCollapsed(!isCategoryCollapsed)}>
       <View style={styles.filterCapsule}>
         <Text style={styles.header}>Filter by Category</Text>
-        {selectedCategories.length !== 0 && <Button icon="filter"/>} 
+        {selectedCategories.length !== 0 && <Button icon="filter"  />} 
       </View>
     </TouchableOpacity>
     <Collapsible collapsed={isCategoryCollapsed}>

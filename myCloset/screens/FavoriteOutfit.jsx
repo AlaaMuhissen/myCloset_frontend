@@ -3,10 +3,11 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Image, But
 import axios from 'axios';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { COLORS } from '../constants';
+import { COLORS ,FONT} from '../constants';
 import Header from '../components/Header';
-import Icon from 'react-native-vector-icons/Ionicons'; 
+
 import outfitPlaceHolder from '../assets/outfitPlaceHolder.jpg'
+import { useAuthentication } from '../utils/hooks/useAuthentication';
 
 function FavoriteOutfit() {
     const [outfits, setOutfits] = useState([]);
@@ -16,17 +17,35 @@ function FavoriteOutfit() {
     const [isSelectionMode, setIsSelectionMode] = useState(false);
     const [selectedItems, setSelectedItems] = useState(new Set());
     const [isSelectedAll, setIsSelectedAll] = useState(false);
+    const { user } = useAuthentication();
   
-  
+    const getSeasonIcon = (season) => {
+      switch (season) {
+        case 'Summer':
+          return { name: 'sunny-sharp', color: '#FFD700' }; // Gold
+        case 'Winter':
+          return { name: 'snow-sharp', color: '#00BFFF' }; // DeepSkyBlue
+        case 'Spring':
+          return { name: 'flower-sharp', color: '#32CD32' }; // LimeGreen
+        case 'Autumn':
+          return { name: 'leaf', color: '#FF8C00' }; // DarkOrange
+        default:
+          return { name: 'circle', color: COLORS.black };
+      }
+    };
+    
     const fetchOutfits = async () => {
       try {
-        setLoading(true);
-        const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/outfit/getFavoriteOutfit/mohissen1234/${selectedSeason}`);
-        if (response.data) {
-            console.log(response.data)
-          setOutfits(response.data.favoriteOutfits);
-        } else {
-          setOutfits([]);
+        if(user){
+
+          setLoading(true);
+          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/outfit/getFavoriteOutfit/${user.uid}/${selectedSeason}`);
+          if (response.data) {
+              console.log(response.data)
+            setOutfits(response.data.favoriteOutfits);
+          } else {
+            setOutfits([]);
+          }
         }
       } catch (error) {
         console.error('Error fetching outfits:', error);
@@ -37,7 +56,7 @@ function FavoriteOutfit() {
     };
     useEffect(() => {
       fetchOutfits();
-    }, [selectedSeason]);
+    }, [selectedSeason ,user]);
   
     const toggleSelectItem = (itemId) => {
       setSelectedItems(prevSelectedItems => {
@@ -66,7 +85,7 @@ function FavoriteOutfit() {
             outfitId: outfit.outfitId
           };
           const response = await axios.delete(
-            `https://mycloset-backend-hnmd.onrender.com/api/outfit/deleteFromFavorite/mohissen1234`,
+            `https://mycloset-backend-hnmd.onrender.com/api/outfit/deleteFromFavorite/${user.uid}`,
             {
               headers: {
                 'Content-Type': 'application/json',
@@ -94,7 +113,7 @@ function FavoriteOutfit() {
   
       try{
         setLoading(true);
-        const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/outfit/mohissen1234/${selectedSeason}`, {
+        const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/${selectedSeason}`, {
           data: { itemsId: Array.from(selectedItems) }
         });
         if (response.status === 200) {
@@ -113,16 +132,23 @@ function FavoriteOutfit() {
       }
     };
     const renderSeasonButton = (season) => {
+      const isSelected = selectedSeason === season;
+      const { name: iconName, color: iconColor } = getSeasonIcon(season);
+  
       return (
         <TouchableOpacity
           key={season}
-          style={[styles.seasonButton, selectedSeason === season && styles.selectedSeasonButton]}
+          style={[styles.seasonButton, isSelected && styles.selectedSeasonButton]}
           onPress={() => setSelectedSeason(season)}
         >
-          <Text style={styles.seasonButtonText}>{season}</Text>
+          <View style= {{flexDirection : 'row' , justifyContent:'center' , alignItems : 'center' }}> 
+          <Ionicons name={iconName} size={24} color={isSelected ? iconColor : iconColor} style={styles.icon} />
+          <Text style={[styles.seasonButtonText, isSelected && styles.selectedSeasonButtonText]}>{season}</Text>
+          </View>
         </TouchableOpacity>
       );
     };
+  
     const handleEnableSelectionMode = () => {
       setIsSelectionMode(true);
     };
@@ -130,9 +156,9 @@ function FavoriteOutfit() {
     return (
       <View style={styles.container}>
           <Header name={"Your Favorite Outfits"} icon={''} />
-          <View style={styles.seasonSelector}>
-              {['Summer', 'Winter', 'Spring', 'Autumn'].map(season => renderSeasonButton(season))}
-          </View>
+          <ScrollView horizontal style={styles.seasonSelector}>
+              {['Summer', 'Autumn' ,'Winter', 'Spring'].map(season => renderSeasonButton(season))}
+          </ScrollView>
           <ScrollView>
               <View>
                   <View style={styles.seasonOutfit}>
@@ -185,8 +211,8 @@ function FavoriteOutfit() {
     },
     emptyStateContainer: {
       flex: 1,
-      backgroundColor : '#fff',
-      borderRadius : 10,
+      backgroundColor: COLORS.white,
+      borderRadius: 10,
       justifyContent: 'center',
       alignItems: 'center',
       padding: 20,
@@ -198,81 +224,80 @@ function FavoriteOutfit() {
     },
     emptyStateText: {
       fontSize: 18,
-      color: "#000",
+      color: COLORS.primary,
       textAlign: 'center',
       marginBottom: 20,
+      fontFamily: FONT.regular,
     },
     addButton: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: '#ff6f61',
+      backgroundColor: COLORS.tertiary,
       padding: 10,
       borderRadius: 5,
     },
     addButtonText: {
-      color: '#fff',
+      color: COLORS.white,
       fontSize: 16,
       marginLeft: 10,
+      fontFamily: FONT.bold,
     },
     seasonOutfit: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       padding: 16,
-      // backgroundColor: '#f8f9fa',
       borderRadius: 10,
-      shadowColor: '#fff',
+      shadowColor: COLORS.gray2,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 6,
       elevation: 5,
       marginVertical: 10,
-  },
-  title: {
+    },
+    title: {
       fontSize: 18,
       fontWeight: 'bold',
-      color: '#fff',
-  },
-  outfitNumContainer: {
-      backgroundColor: '#4caf50',
+      color: COLORS.primary,
+      fontFamily: FONT.bold,
+    },
+    outfitNumContainer: {
+      backgroundColor: COLORS.tertiary,
       paddingVertical: 6,
       paddingHorizontal: 12,
       borderRadius: 20,
       alignItems: 'center',
       justifyContent: 'center',
-      shadowColor: '#000',
+      shadowColor: COLORS.gray2,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 6,
       elevation: 5,
-  },
-  outfitNum: {
+    },
+    outfitNum: {
       fontSize: 16,
       fontWeight: 'bold',
-      color: '#fff',
-  },
-   
-    outfitsSection : {
-      flexDirection: 'row',
-      flexWrap : 'wrap',
-      justifyContent : 'space-between',
-      padding : 5
+      color: COLORS.white,
+      fontFamily: FONT.bold,
     },
-    
+    outfitsSection: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      padding: 5,
+    },
     outfitContainer: {
       flexDirection: 'row',
       marginVertical: 10,
       maxWidth: 100,
       position: 'relative',
-      margin : 5
-      // backgroundColor: "#ccc",
+      margin: 5,
     },
     editIcon: {
       position: 'absolute',
-      // top: 10,
       right: -10,
       zIndex: 10,
-      backgroundColor: 'white',
+      backgroundColor: COLORS.tertiary,
       borderRadius: 50,
       padding: 5,
     },
@@ -284,24 +309,29 @@ function FavoriteOutfit() {
     },
     seasonSelector: {
       flexDirection: 'row',
-      justifyContent: 'space-around',
-      marginVertical: 10,
+      maxHeight :80,
     },
     seasonButton: {
-      padding: 10,
-      backgroundColor: '#ddd',
+      minWidth: 50,
+      maxHeight: 50,
+      padding : 10,
+      backgroundColor: COLORS.gray2,
       borderRadius: 5,
+      margin: 10,
+      justifyContent:'space-between' , alignItems : 'center'
     },
     selectedSeasonButton: {
-      backgroundColor: '#aaa',
+      backgroundColor: COLORS.primary,
     },
     seasonButtonText: {
-      fontSize: 16,
+      fontSize: 14,
       fontWeight: 'bold',
+      fontFamily: FONT.bold,
+      color: COLORS.black,
+      marginLeft :7
     },
-    selectedOutfitContainer: {
-      borderColor: 'blue',
-      borderWidth: 2,
+    selectedSeasonButtonText: {
+      color: COLORS.white,
     },
     buttonContainer: {
       flexDirection: 'row',
@@ -310,12 +340,13 @@ function FavoriteOutfit() {
     },
     noOutfitsText: {
       fontSize: 18,
-      color: "#000",
+      color: COLORS.primary,
       textAlign: 'center',
       margin: 20,
+      fontFamily: FONT.regular,
     }
-    
-});
+  });
+
 
 
 export default FavoriteOutfit

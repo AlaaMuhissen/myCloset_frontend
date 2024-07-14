@@ -1,7 +1,8 @@
+
 export const categories = [
     {
       label: 'Tops',
-      icons: "tshirt",
+      icons: require('../icons/clothesIcons/tees.png'),
       subOptions: [
         { label: 'T_shirt' ,icons: 'tshirt'},
         { label: 'Pullover' ,icons: 'tshirt'},
@@ -14,7 +15,7 @@ export const categories = [
     },
     {
       label: 'Bottoms',
-      icons: 'tshirt',
+      icons: require('../icons/clothesIcons/pants.png'),
       subOptions: [
         { label: 'Jeans',icons: 'tshirt' },
         { label: 'Pants' ,icons: 'tshirt'},
@@ -23,8 +24,17 @@ export const categories = [
       ]
     },
     {
+      label: 'One_Piece',
+      icons: require('../icons/clothesIcons/dress_1785388.png'),
+      subOptions: [
+        { label: 'Dresses',icons: 'tshirt' },
+        { label: 'Overalls' ,icons: 'tshirt'},
+
+      ]
+    },
+    {
       label: 'Outwear',
-      icons: 'tshirt',
+      icons: require('../icons/clothesIcons/coat.png'),
       subOptions: [
         { label: 'Jacket' ,icons: 'tshirt'},
         { label: 'Coat' ,icons: 'tshirt'},
@@ -34,7 +44,7 @@ export const categories = [
     },
     {
       label: 'Shoes',
-      icons: 'tshirt',
+      icons: require('../icons/clothesIcons/shoes.png'),
       subOptions: [
         { label: 'Casual_Shoes' ,icons: 'tshirt'},
         { label: 'Formal_Shoes',icons: 'tshirt' },
@@ -42,13 +52,12 @@ export const categories = [
         { label: 'Sandal',icons: 'tshirt' },
         { label: 'Flip_Flops',icons: 'tshirt' },
         { label: 'Heels' ,icons: 'tshirt'},
-        ,
         { label: 'Athletic_Shoes' ,icons: 'tshirt'},
       ]
     },
     {
       label: 'Bags',
-      icons: "tshirt",
+      icons: require('../icons/clothesIcons/bag.png'),
       subOptions: [
         { label: 'Shoulder_Bag' ,icons: 'tshirt'},
         { label: 'Crossbody_Bag' ,icons: 'tshirt'},
@@ -60,7 +69,7 @@ export const categories = [
     },
     {
       label: 'Head_wear',
-      icons: 'tshirt',
+      icons: require('../icons/clothesIcons/hat.png'),
       subOptions: [
         { label: 'Hat',icons: 'tshirt' },
         { label: 'Scarf' ,icons: 'tshirt'}
@@ -68,7 +77,7 @@ export const categories = [
     },
     {
       label: 'Jewelry',
-      icons: 'tshirt',
+      icons: require('../icons/clothesIcons/jewelry.png'),
       subOptions: [
         { label: 'Necklace' ,icons: 'tshirt' },
         { label: 'Earring' ,icons: 'tshirt'},
@@ -80,7 +89,7 @@ export const categories = [
     },
     {
       label: 'Other_items',
-      icons: 'tshirt',
+      icons: require('../icons/clothesIcons/consumption_7417787.png'),
       subOptions: [
         { label: 'others' ,data: []}
       ]

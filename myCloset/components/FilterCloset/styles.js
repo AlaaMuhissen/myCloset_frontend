@@ -79,11 +79,12 @@ export const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   selectedColorCircle: {
-    borderColor: 'blue',
+    borderColor: COLORS.tertiary,
   },
   applyButton: {
     marginTop: 16,
     paddingVertical: 8,
+    backgroundColor: COLORS.tertiary
   },
   modalContainer: {
     flex: 1,
@@ -123,6 +124,7 @@ export const styles = StyleSheet.create({
   },
   closeButton: {
     marginTop: 16,
+    
   },
   resultsHeader: {
     fontSize: 18,

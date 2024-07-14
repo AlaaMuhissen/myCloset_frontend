@@ -4,8 +4,11 @@ import {API_KEY , AUTH_DOMAIN , PROJECT_ID, STORAGE_BUCKET,MESSAGING_SENDER_ID ,
 import { signInWithEmailAndPassword ,getAuth } from 'firebase/auth';
 import SignupWithEmail from './SignupWithEmail';
 import { COLORS } from '../constants';
+import { useNavigation } from '@react-navigation/native';
+import { useAuthentication } from '../utils/hooks/useAuthentication';
 const bgImg = require('../assets/images/apparel-choosing-clothing-fashion.jpg');
 const auth = getAuth();
+
 const styles = StyleSheet.create({
     backgroundImage: {
         flex: 1,
@@ -70,6 +73,8 @@ export default function LoginWithEmail() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { user } = useAuthentication();
+  const navigation = useNavigation()
    console.log(API_KEY)
   const signIn = async () => {
     try {
@@ -86,10 +91,10 @@ export default function LoginWithEmail() {
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
-      // Redirect to dashboard or navigate to another screen
-    }
-  }, [isAuthenticated]);
+    // if (user) {
+    //   navigation.navigate('Home');
+    // }
+  }, [user, navigation]);
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -120,7 +125,7 @@ export default function LoginWithEmail() {
         <TouchableOpacity style={styles.button} onPress={signIn}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
-        <Text style={styles.signupText}>Don't have an account? <Text style={styles.signupLink}>Sign up</Text></Text>
+        <Text style={styles.signupText}>Don't have an account? <TouchableOpacity style={styles.signupLink}onPress={()=> navigation.navigate('registration')}><Text>Sign up</Text></TouchableOpacity></Text>
         <View>
       <SignupWithEmail/>
       

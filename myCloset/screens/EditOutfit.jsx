@@ -9,9 +9,11 @@ import { uploadImage } from '../config/cloudinary';
 import ClothesGrid from '../components/User_Categories/ClothesGrid.jsx';
 import CategoryList from '../components/User_Categories/CategoryList';
 import SubCategoryList from '../components/User_Categories/SubCategoryList';
+import { Ionicons } from '@expo/vector-icons';
 import { categories } from '../assets/data/categories';
 import { COLORS } from '../constants';
 import Header from '../components/Header';
+import { useAuthentication } from '../utils/hooks/useAuthentication.js';
 
 const { height } = Dimensions.get('window');
 
@@ -35,7 +37,7 @@ const EditOutfit = () => {
     const [captureMode, setCaptureMode] = useState(false);
     const viewShotRef = useRef(null);
     const [refreshing, setRefreshing] = useState(false);
-  
+    const { user } = useAuthentication();
     useEffect(() => {
       if (outfit) {
         setItemsId(outfit.itemsId);
@@ -50,9 +52,11 @@ const EditOutfit = () => {
   
     const fetchData = async () => {
       try {
+        if(user){
         setLoading(true);
-        const response = await axios.get('https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234');
+        const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}`);
         setClothesData(new Map(Object.entries(response.data.categories)));
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -174,12 +178,12 @@ const EditOutfit = () => {
         };
         console.log(updatedOutfit)
         if (saveAsNew) {
-          await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/outfit/mohissen1234/${season}`, updatedOutfit, {
+          await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/${season}`, updatedOutfit, {
             headers: { 'Content-Type': 'application/json' }
           });
           Alert.alert('Success', 'New outfit created successfully!');
         } else {
-          await axios.put(`https://mycloset-backend-hnmd.onrender.com/api/outfit/mohissen1234/${season}/${outfit._id}`, updatedOutfit, {
+          await axios.put(`https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/${season}/${outfit._id}`, updatedOutfit, {
             headers: { 'Content-Type': 'application/json' }
           });
           Alert.alert('Success', 'Outfit updated successfully!');

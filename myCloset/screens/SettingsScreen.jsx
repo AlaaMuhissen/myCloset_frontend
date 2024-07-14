@@ -6,22 +6,26 @@ import { COLORS } from '../constants';
 import { useNavigation } from '@react-navigation/native';
 
 import { getAuth, signOut }from 'firebase/auth'
+import { useAuthentication } from '../utils/hooks/useAuthentication';
 
 const auth = getAuth();
 const SettingsScreen = () => {
     const navigation = useNavigation();
     const [loading, setLoading] = useState(true);
     const [clothesNumber, setClothesNumber] = useState(0);
-
+    const { user } = useAuthentication();
+    console.log(user)
     useEffect(() => {
       const fetchClothesNumber = async () => {
         try {
-          setLoading(true);
-          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234/clothesNumber`);
-          if (response.data) {
-            setClothesNumber(response.data.clothesNumber);
-          } else {
-            setClothesNumber(0);
+          if(user){
+            setLoading(true);
+            const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}/clothesNumber`);
+            if (response.data) {
+              setClothesNumber(response.data.clothesNumber);
+            } else {
+              setClothesNumber(0);
+            }
           }
         } catch (error) {
           console.error('Error fetching outfits:', error);
@@ -31,7 +35,7 @@ const SettingsScreen = () => {
         }
       };
       fetchClothesNumber();
-    }, []);
+    }, [user]);
 
     const logOut = () => {
         signOut(auth);
@@ -70,16 +74,17 @@ const SettingsScreen = () => {
         <View style = {{marginVertical:30 ,marginHorizontal: 15 ,gap :10}}>
          <View style={styles.userSection}>
             <View style={styles.rightSection}> 
-             <Image source={require('../assets/images/avatar.jpg')} style={styles.userPic} />
+            {user && <Image source={user.photoURL ? { uri: user.photoURL } : require('../assets/images/defultAvatar.png')} style={styles.userPic} />}
+
                 <View style={{gap:5}}>
-                    <Text style={styles.userName}>Alaa Muhissen</Text>
-                    {clothesNumber !== 0 && <Text style={styles.itemsNum}>{clothesNumber} items in your wardrobe</Text>
+                  { user && <Text style={styles.userName}>Welcome {user?.displayName ? user.displayName :user?.email},</Text>}
+                    {clothesNumber !== 0 ? (<Text style={styles.itemsNum}>{clothesNumber} items in your wardrobe</Text>)  : (<Text style={styles.itemsNum}>Start to add your clothes!</Text>)
                     }
                 </View>
             </View>
 
-            <TouchableOpacity style={styles.editIcon}>
-              <Ionicons name="create-outline" size={32} color={COLORS.white} />
+            <TouchableOpacity style={styles.editIcon} onPress={()=> navigation.navigate('EditProfileScreen')}>
+              <Ionicons name="create-outline" size={32} color={COLORS.tertiary} />
             </TouchableOpacity>
 
             </View>
@@ -87,9 +92,9 @@ const SettingsScreen = () => {
      
       
       {renderSection('Section 2', [
-        { text: 'My Style', icon: 'shirt-outline', screen: 'favoriteOutfits' },
-        { text: 'Alerts', icon: 'notifications-outline', screen: 'AlertsScreen' },
-        { text: 'Visuals', icon: 'eye-outline', screen: 'VisualsScreen' }
+        { text: 'My Favorite Outfits', icon: 'heart-sharp', screen: 'favoriteOutfits' },
+        // { text: 'Alerts', icon: 'notifications-outline', screen: 'AlertsScreen' },
+        { text: 'Statics', icon: 'bar-chart', screen: 'StatisticsScreen' }
       ])}
       {renderSection('Section 3', [
         { text: 'Terms And Conditions', icon: 'document-text-outline', screen: 'TermsScreen' },
@@ -103,7 +108,7 @@ const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#090909',
+    backgroundColor: COLORS.background,
     gap: 20,
     paddingHorizontal: 20,
   
@@ -133,12 +138,15 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 50,
+    borderWidth :1,
+    borderColor :'#ccc',
     marginRight: 10,
+    
   },
   userName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: COLORS.white,
+    color: COLORS.primary,
 
   },
   itemsNum: {

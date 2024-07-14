@@ -1,46 +1,30 @@
 import React from 'react';
 import { View, Text, Image, ScrollView } from 'react-native';
+import { COLORS, FONT } from '../../constants';
 
 const WeatherCard = ({ weatherData }) => {
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       {weatherData.forecast.forecastday.map((day, index) => (
         <View
-         key={index}
-          style={{
-            backgroundColor: 'white',
-            padding: 16,
-            flexDirection: 'row', alignItems: 'center',
-            justifyContent: 'space-between',
-            borderRadius: 8,
-            marginRight: 8,
-            shadowColor: '#fff',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 4,
-            elevation: 5,
-          }}
+          key={index}
+          style={styles.card}
         >
-        
-        <View>
-   
-          <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 8 }}>
-            {day.date}
-          </Text>
-        
-          <Text style={{ color: 'gray', fontSize:10 , marginBottom: 5 }}>
-            {day.day.maxtemp_c}°C / {day.day.mintemp_c}°C
-          </Text>
-         
+          <View>
+            <Text style={styles.dateText}>
+              {day.date}
+            </Text>
+            <Text style={styles.tempText}>
+              {day.day.maxtemp_c}°C / {day.day.mintemp_c}°C
+            </Text>
           </View>
-          <View >
-
-          <Image
-                style={{ width: 40, height: 40 , marginLeft: 4}}
-                source={{ uri: `https:${day.day.condition.icon}` }}
-                resizeMode="contain"
+          <View>
+            <Image
+              style={styles.weatherIcon}
+              source={{ uri: `https:${day.day.condition.icon}` }}
+              resizeMode="contain"
             />
-            </View>
+          </View>
         </View>
       ))}
     </ScrollView>
@@ -48,3 +32,38 @@ const WeatherCard = ({ weatherData }) => {
 };
 
 export default WeatherCard;
+
+const styles = {
+  card: {
+    backgroundColor: COLORS.lightWhite,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderRadius: 8,
+    marginRight: 8,
+    shadowColor: COLORS.gray2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  dateText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: COLORS.primary,
+    fontFamily: FONT.bold,
+  },
+  tempText: {
+    color: COLORS.gray,
+    fontSize: 10,
+    marginBottom: 5,
+    fontFamily: FONT.regular,
+  },
+  weatherIcon: {
+    width: 40,
+    height: 40,
+    marginLeft: 4,
+  },
+};

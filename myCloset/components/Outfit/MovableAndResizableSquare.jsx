@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, PanResponder, Dimensions } from 'react-native';
+import { COLORS } from '../../constants';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
 const MovableAndResizableSquare = ({ item, size, position, onResize, onMove, onRemove, captureMode }) => {
   const [currentSize, setCurrentSize] = useState(size);
   const [currentPosition, setCurrentPosition] = useState(position);
-  // console.log('item => ' , item)
-  // console.log('position => ' ,position )
+
   useEffect(() => {
     setCurrentSize(size);
   }, [size]);
 
   useEffect(() => {
-    console.log("positiom =>" ,position)
+
     setCurrentPosition(position);
   }, [position]);
 
@@ -29,7 +30,7 @@ const MovableAndResizableSquare = ({ item, size, position, onResize, onMove, onR
       const newX = currentPosition.x + gestureState.dx;
       const newY = currentPosition.y + gestureState.dy;
       if (newY < 0 || newY + currentSize.height > height * 0.5) {
-        console.log("exit");
+  
         setCurrentPosition({ x: 50, y: 50 });
       } else {
         setCurrentPosition({ x: newX, y: newY });
@@ -66,12 +67,14 @@ const MovableAndResizableSquare = ({ item, size, position, onResize, onMove, onR
         {!captureMode && (
           <>
             <TouchableOpacity onPress={() => onRemove(item.id)} style={styles.removeButton}>
-              <Text>X</Text>
+                 <Ionicons name="close-circle-sharp" color={COLORS.tertiary} size={25} />
             </TouchableOpacity>
             <View
               {...resizeResponder.panHandlers}
               style={styles.resizeHandle}
-            />
+            >
+              <Ionicons name="resize-sharp" color={COLORS.tertiary} size={20} />
+              </View>
           </>
         )}
       </View>
@@ -91,9 +94,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -10,
     right: -10,
-    backgroundColor: 'red',
-    width: 20,
-    height: 20,
+    // backgroundColor: 'red',
+    width: 25,
+    height: 25,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
@@ -102,10 +105,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    width: 20,
-    height: 20,
-    backgroundColor: 'grey',
-    borderRadius: 10,
+    width: 25,
+    height: 25,
+    justifyContent: 'center',
+    alignItems : 'center',
+    backgroundColor: '#ccc',
+    borderRadius: 15,
   },
 });
 

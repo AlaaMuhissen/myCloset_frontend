@@ -6,10 +6,14 @@ import { categories } from '../assets/data/categories';
 import EditClothingDetailsModal from '../components/AddClothes/ClothingDetailsModal';
 import { uploadImage } from '../config/cloudinary';
 import Header from '../components/Header';
-import { COLORS } from '../constants';
+import { COLORS, FONT } from '../constants';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { fabrics } from '../assets/data/fabrics';
 import { useNavigation } from '@react-navigation/native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import clotheHolder from '../assets/default-image-clothe.jpg'
+import { Ionicons } from '@expo/vector-icons';
+import { useAuthentication } from '../utils/hooks/useAuthentication';
 const popularTags = ['#Casual', '#Formal', '#Business', '#Party', '#Sports', '#Wedding', '#Vacation', '#Beach', '#Date_Night', '#Festive'];
 const AddClothes = () => {
   const navigation = useNavigation();
@@ -25,98 +29,119 @@ const AddClothes = () => {
   const [allSeasonsChecked, setAllSeasonsChecked] = useState(true);
   const [selectedFabric, setSelectedFabric] = useState(fabrics[0].fabricName);
   const [selectedTags, setSelectedTags] = useState([popularTags[0]]);
+  const { user } = useAuthentication();
+  console.log(user)
 
-  
+
   const requestPermission = async (permissionFunc) => {
+  try {
     const permissionResult = await permissionFunc();
     if (permissionResult.status !== 'granted') {
       alert("You've refused to allow this app to access your photos or camera!");
       return false;
     }
     return true;
-  };
+  } catch (error) {
+    console.error('Permission error:', error);
+    alert('Failed to get permission');
+    return false;
+  }
+};
 
-  const adjustImageQuality = async (uri) => {
-    try {
-      const adjustedImage = await ImageManipulator.manipulateAsync(
-        uri,
-        [
-          { resize: { width: 1080 } }, 
-        ],
-        { compress: 1, format: ImageManipulator.SaveFormat.JPEG } 
-      );
-      return adjustedImage.uri;
-    } catch (err) {
-      console.error('Justed Img error:', err);
-      alert('Failed to upload and process photo');
-    }
-  };
+const adjustImageQuality = async (uri) => {
+  try {
+    const adjustedImage = await ImageManipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: 1080 } }],
+      { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+    );
+    return adjustedImage.uri;
+  } catch (err) {
+    console.error('Justed Img error:', err);
+    alert('Failed to upload and process photo');
+    return null;
+  }
+};
 
-  const handleChoosePhoto = async () => {
-    const hasPermission = await requestPermission(ImagePicker.requestMediaLibraryPermissionsAsync);
-    if (!hasPermission) return;
+const handleChoosePhoto = async () => {
+  const hasPermission = await requestPermission(ImagePicker.requestMediaLibraryPermissionsAsync);
+  if (!hasPermission) return;
 
+  try {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       quality: 1,
     });
 
-    if (!result.cancelled) {
+    if (!result.cancelled && result.assets) {
       const adjustedUri = await adjustImageQuality(result.assets[0].uri);
-      setPhoto({ ...result.assets[0], uri: adjustedUri });
-      handleUploadPhoto({ ...result.assets[0], uri: adjustedUri });
+      if (adjustedUri) {
+        setPhoto({ ...result.assets[0], uri: adjustedUri });
+        handleUploadPhoto({ ...result.assets[0], uri: adjustedUri });
+      }
     }
-  };
+  } catch (error) {
+    console.error('Image picker error:', error);
+    alert('Failed to pick an image');
+  }
+};
 
-  const handleOpenCamera = async () => {
-    const hasPermission = await requestPermission(ImagePicker.requestCameraPermissionsAsync);
-    if (!hasPermission) return;
+const handleOpenCamera = async () => {
+  const hasPermission = await requestPermission(ImagePicker.requestCameraPermissionsAsync);
+  if (!hasPermission) return;
 
+  try {
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       quality: 1,
     });
 
-    if (!result.cancelled) {
+    if (!result.cancelled && result.assets) {
       const adjustedUri = await adjustImageQuality(result.assets[0].uri);
-      setPhoto({ ...result.assets[0], uri: adjustedUri });
-      handleUploadPhoto({ ...result.assets[0], uri: adjustedUri });
-    }
-  };
-
-  const handleUploadPhoto = async (photo) => {
-    if (photo) {
-      setLoading(true);
-      setUploadProgress(0);
-      try {
-        const cloudinaryResponse = await uploadImage(photo.uri);
-        const cloudinaryUrl = cloudinaryResponse.secure_url;
-        console.log("Now we have link === ," , cloudinaryUrl);
-      
-        const apiResponse = await axios.post('https://mycloset.jce.ac/recognize-clothes-and-colors/', {
-          image_url: cloudinaryUrl,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer YOUR_AUTH_TOKEN', // Replace with your actual auth token
-          }
-        });     
-        console.log(apiResponse.data)  
-        setResult(apiResponse.data);
-        setSelectedSubCategory(apiResponse.data.label)
-        setColorPalette(apiResponse.data.color_palette);
-        setModalVisible(true);
-      } catch (error) {
-        console.error('Upload error:', error);
-        alert('Failed to upload and process photo');
-      } finally {
-        setLoading(false);
+      if (adjustedUri) {
+        setPhoto({ ...result.assets[0], uri: adjustedUri });
+        handleUploadPhoto({ ...result.assets[0], uri: adjustedUri });
       }
     }
-  };
+  } catch (error) {
+    console.error('Camera error:', error);
+    alert('Failed to take a photo');
+  }
+};
+
+const handleUploadPhoto = async (photo) => {
+  if (photo) {
+    setLoading(true);
+    setUploadProgress(0);
+    try {
+      const cloudinaryResponse = await uploadImage(photo.uri);
+      const cloudinaryUrl = cloudinaryResponse.secure_url;
+      console.log("Now we have link === ," , cloudinaryUrl);
+    
+      const apiResponse = await axios.post('https://mycloset.jce.ac/recognize-clothes-and-colors/', {
+        image_url: cloudinaryUrl,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer YOUR_AUTH_TOKEN', // Replace with your actual auth token
+        }
+      });     
+      console.log(apiResponse.data);  
+      setResult(apiResponse.data);
+      setSelectedSubCategory(apiResponse.data.label);
+      setColorPalette(apiResponse.data.color_palette);
+      setModalVisible(true);
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload and process photo');
+    } finally {
+      setLoading(false);
+    }
+  }
+};
   
   const handleSave = async () => {
     if(!selectedSubCategory){
@@ -148,7 +173,7 @@ const AddClothes = () => {
         tags : selectedTags
       }
       console.log(temp)
-      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/closet/mohissen1234/${selectedCategory}/${selectedSubCategory}`, {
+      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}/${selectedCategory}/${selectedSubCategory}`, {
         imgUrl: result.image_without_background_url,
         seasons: selectedSeasons,
         colors: colorPalette,
@@ -231,16 +256,31 @@ const AddClothes = () => {
     <View style={styles.screen}>
       <Header name={"Add Your Item!"} icon={''} />
       <View style={styles.buttonContainer}>
-        <Button onPress={handleChoosePhoto} title="Select an image" color={'#fff'} />
-        <Button onPress={handleOpenCamera} title="Open camera" color={'#fff'} />
+        <TouchableOpacity onPress={handleChoosePhoto} title="Select an image" style = {styles.btn} >
+          <View style={styles.inBtn}>
+             <Ionicons name="image-sharp" color={COLORS.white} size={25} />
+             <Text style = {styles.btnText}> Select an image</Text>
+          </View>
+          </TouchableOpacity>
+        <TouchableOpacity onPress={handleOpenCamera} title="Open camera" style = {styles.btn} >
+        <View style={styles.inBtn}>
+        <Ionicons name="camera-sharp" color={COLORS.white} size={25} />
+        <Text style = {styles.btnText}> Open camera</Text>
+        </View>
+        </TouchableOpacity>
       </View>
   
       <View style={styles.imageContainer}>
-        {photo && (
+        {photo ? (
           <>
             <Image source={{ uri: photo.uri }} style={styles.image} />
             <Button title="Cancel" onPress={handleCancel} color={'red'} />
           </>
+        ) : (
+          <View style={styles.imageHolderContainer}>
+
+          <Image source={clotheHolder} style={styles.image} />
+          </View>
         )}
         {loading && (
           <View style={styles.loadingContainer}>
@@ -281,13 +321,33 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: COLORS.background,
-    paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingHorizontal: 12,
   },
   buttonContainer: {
-    flexDirection: 'row',
     justifyContent: 'space-around',
+    gap: 20,
     marginVertical: 20,
+  },
+  inBtn :{
+    flexDirection : 'row',
+    justifyContent :'center',
+    alignItems: 'center',
+    gap:10
+  },
+  btn : {
+    backgroundColor : COLORS.primary,
+    padding : 20,
+    borderRadius :10,
+    color: COLORS.white
+  },
+  btnText: { 
+     color : COLORS.background ,
+     fontFamily : FONT.regular
+  },
+  imageHolderContainer:{
+    borderWidth : 1,
+    borderRadius :10 ,
+    borderColor : COLORS.lightWhite
   },
   imageContainer: {
     alignItems: 'center',
