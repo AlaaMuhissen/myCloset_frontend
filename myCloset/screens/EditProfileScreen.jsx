@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback, Image, ScrollView, ActivityIndicator } from 'react-native';
-import { TextInput, Button, Card, Title, Paragraph } from 'react-native-paper';
+import { View, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback, Image, ScrollView } from 'react-native';
+import { TextInput, Button, Card, Title, Paragraph, ActivityIndicator } from 'react-native-paper';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native';
@@ -8,6 +8,7 @@ import { COLORS } from '../constants';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuthentication } from '../utils/hooks/useAuthentication';
 import { uploadImage } from '../config/cloudinary';
+import { Skeleton } from 'moti/skeleton';
 
 const EditProfileScreen = () => {
   const { user } = useAuthentication();
@@ -47,14 +48,6 @@ const EditProfileScreen = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
-    );
-  }
-
   const requestPermission = async (permissionFunc) => {
     const permissionResult = await permissionFunc();
     if (permissionResult.status !== 'granted') {
@@ -74,7 +67,7 @@ const EditProfileScreen = () => {
       quality: 1,
     });
   
-    if (!result.cancelled && result.assets) {
+    if (!result.canceled && result.assets) {
       setImage({ uri: result.assets[0].uri });
       handleUploadPhoto(result.assets[0].uri); // Assuming handleUploadPhoto expects a URI
     }
@@ -90,7 +83,7 @@ const EditProfileScreen = () => {
       quality: 1,
     });
   
-    if (!result.cancelled && result.assets) {
+    if (!result.canceled && result.assets) {
       setImage({ uri: result.assets[0].uri });
       handleUploadPhoto(result.assets[0].uri); // Assuming handleUploadPhoto expects a URI
     }
@@ -114,7 +107,7 @@ const EditProfileScreen = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{ backgroundColor: COLORS.background }}>
       <ScrollView contentContainerStyle={styles.scrollView}>
         <View style={styles.container}>
           <Card style={styles.card}>
@@ -122,30 +115,43 @@ const EditProfileScreen = () => {
               <Title style={styles.title}>Edit Profile</Title>
               <Paragraph style={styles.paragraph}>Update your profile information</Paragraph>
               <View style={styles.inputContainer}>
-                {image && <Image source={image} style={styles.image} />}
-                <Button mode="outlined" onPress={handleChoosePhoto} style={styles.uploadButton}  labelStyle={styles.buttonText}>
+                {loading ? (
+                  <Skeleton colorMode="light" height={100} width={100}  radius="round" />
+                ) : (
+                  image && <Image source={image} style={styles.image} />
+                )}
+                <Button mode="outlined" onPress={handleChoosePhoto} style={styles.uploadButton} labelStyle={styles.buttonText}>
                   Choose Photo
                 </Button>
-                <Button mode="outlined" onPress={handleOpenCamera} style={styles.uploadButton}  labelStyle={styles.buttonText}>
+                <Button mode="outlined" onPress={handleOpenCamera} style={styles.uploadButton} labelStyle={styles.buttonText}>
                   Take Photo
                 </Button>
               </View>
-              <TextInput
-                label="Display Name"
-                value={displayName}
-                onChangeText={text => setDisplayName(text)}
-                style={styles.input}
-                autoCapitalize="none"
-                onBlur={Keyboard.dismiss}
-              />
-              <TextInput
-                label="Phone Number"
-                value={phoneNumber}
-                onChangeText={text => setPhoneNumber(text)}
-                style={styles.input}
-                autoCapitalize="none"
-                onBlur={Keyboard.dismiss}
-              />
+              {loading ? (
+                <>
+                  <Skeleton colorMode="light" height={50} width="100%" style={styles.input} />
+                  <Skeleton colorMode="light" height={50} width="100%" style={styles.input} />
+                </>
+              ) : (
+                <>
+                  <TextInput
+                    label="Display Name"
+                    value={displayName}
+                    onChangeText={text => setDisplayName(text)}
+                    style={styles.input}
+                    autoCapitalize="none"
+                    onBlur={Keyboard.dismiss}
+                  />
+                  <TextInput
+                    label="Phone Number"
+                    value={phoneNumber}
+                    onChangeText={text => setPhoneNumber(text)}
+                    style={styles.input}
+                    autoCapitalize="none"
+                    onBlur={Keyboard.dismiss}
+                  />
+                </>
+              )}
               <Button
                 mode="contained"
                 onPress={handleUpdate}
@@ -179,7 +185,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 20,
     borderRadius: 20,
-    backgroundColor: COLORS.lightWhite
+    backgroundColor: COLORS.lightWhite,
   },
   title: {
     fontSize: 24,
@@ -203,7 +209,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.tertiary,
     borderRadius: 10,
     paddingVertical: 10,
-
   },
   buttonText: {
     color: COLORS.primary, // Change this to your desired color
@@ -217,7 +222,7 @@ const styles = StyleSheet.create({
   uploadButton: {
     marginBottom: 10,
     borderColor: COLORS.primary,
-    color : COLORS.white
+    color: COLORS.white,
   },
   loadingContainer: {
     flex: 1,

@@ -6,6 +6,7 @@ import { categories } from '../../assets/data/categories';
 import { fabrics } from '../../assets/data/fabrics';
 import Collapsible from 'react-native-collapsible';
 import ColorPickerModal from './ColorPickerModal'
+import { COLORS, FONT, SIZES } from '../../constants';
 const seasons = ['Spring', 'Summer', 'Autumn', 'Winter'];
 const { width, height } = Dimensions.get('window');
 const popularTags = ['#Casual', '#Formal', '#Business', '#Party', '#Sports', '#Wedding', '#Vacation', '#Beach', '#Date_Night', '#Festive'];
@@ -328,11 +329,13 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     fontSize: 18,
-    color: '#2196F3',
+    color: COLORS.primary,
   },
   modalText: {
     marginBottom: 15,
     textAlign: 'center',
+    fontFamily :FONT.bold,
+    fontSize : SIZES.medium
   },
   image: {
     width: 300,
@@ -403,8 +406,10 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   buttonClose: {
-    backgroundColor: '#2196F3',
+    backgroundColor: COLORS.tertiary,
     marginTop: 10,
+    paddingHorizontal:20,
+    paddingVertical : 12
   },
   textStyle: {
     color: 'white',

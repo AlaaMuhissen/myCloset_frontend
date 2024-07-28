@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getAuth, signOut } from 'firebase/auth';
 import { useAuthentication } from '../utils/hooks/useAuthentication';
-import { COLORS, FONT } from '../constants';
+import { COLORS, FONT, SIZES } from '../constants';
 
 const auth = getAuth();
 
@@ -31,14 +31,14 @@ const styles = StyleSheet.create({
 
   },
   textContainer: {
+    paddingVertical : 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
   },
   greetingText: {
-    fontSize: 24,
+    fontSize: SIZES.large,
     color: COLORS.primary,
     fontFamily: FONT.bold,
-    marginBottom: 5
   }
 });

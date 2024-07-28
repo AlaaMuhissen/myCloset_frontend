@@ -29,6 +29,7 @@ const AddOutfit = () => {
   const receivingZoneRef = useRef();
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuthentication();
+  const [outfitSeason, setOutfitSeason] = useState(null); // Default is null, prompting the user to choose
   const resetPosition = (id) => {
     setPositions(prevPositions => ({
       ...prevPositions,
@@ -108,7 +109,8 @@ const AddOutfit = () => {
     setRefreshing(true);
     fetchData().finally(() => setRefreshing(false));
   };
-  const captureAndUpload = async () => {
+  const captureAndUpload = async (season) => {
+    setOutfitSeason(season);
     setCaptureMode(true); // Enable capture mode
     setLoading(true);
     setTimeout(async () => { // Allow some time for the UI to update
@@ -136,7 +138,7 @@ const AddOutfit = () => {
         };
 
         const response = await axios.post(
-          `https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/Summer`,
+          `https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/${season}`,
           state,
           { headers: { 'Content-Type': 'application/json' } }
         );
@@ -147,8 +149,7 @@ const AddOutfit = () => {
           [
             { text: 'Add Another Outfit', onPress: () => resetState() },
             { text: 'Show All Outfits', onPress: () => {
-              
-              resetState();navigation.navigate('ShowOutfits') }
+              resetState(); navigation.navigate('ShowOutfits') }
             },
           ]
         );
@@ -161,6 +162,20 @@ const AddOutfit = () => {
       }
     }, 100); // Delay to ensure the UI updates
   };
+
+  const promptSeasonSelection = () => {
+    Alert.alert(
+      'Select Season',
+      'Please select a season for the outfit:',
+      [
+        { text: 'Summer', onPress: () => captureAndUpload('Summer') },
+        { text: 'Autumn', onPress: () => captureAndUpload('Autumn') },
+        { text: 'Winter', onPress: () => captureAndUpload('Winter') },
+        { text: 'Spring', onPress: () => captureAndUpload('Spring') },
+      ],
+      { cancelable: true }
+    );
+  };
   const resetState = () => {
     setReceived([]);
     setSizes({});
@@ -168,7 +183,7 @@ const AddOutfit = () => {
   };
   return (
     <View style={styles.container}> 
-      <Header name={"Make your magic!"} icon={'bookmark-sharp'} onIconPress={captureAndUpload} />
+      <Header name={"Make your magic!"} icon={'bookmark-sharp'} onIconPress={promptSeasonSelection} />
       <DraxProvider>
         <View>
           <View style={styles.receivingZoneContainer}>
@@ -198,7 +213,7 @@ const AddOutfit = () => {
               <SubCategoryList subOptions={selectedCategoryData.subOptions} handleSubCategory={handleSubCategory} isSmall={true} />
             )}
               <ScrollView style={styles.clothesGridContainer}>
-                <ClothesGrid
+              {clothesData.length !== 0 && <ClothesGrid
                   clothesData={clothesData}
                   selectedCategory={selectedCategory}
                   selectedSubCategory={selectedSubCategory}
@@ -206,7 +221,7 @@ const AddOutfit = () => {
                   refreshing={refreshing}
                   onRefresh={onRefresh}
                   isSelectionMode= {false}
-                />
+                />}
               </ScrollView>
           </View>
             )}
@@ -223,15 +238,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   receivingZoneContainer: {
-    // height: height * 0.4,
-    // borderWidth: 10,
-    // borderColor: "#fff"
   },
   scrollContainer: {
-    // height: height * 0.4,
     width: "100%",
-    // borderWidth: 2,
-    // borderColor: "#fff",
   },
   loadingContainer: {
     flexDirection: 'row',

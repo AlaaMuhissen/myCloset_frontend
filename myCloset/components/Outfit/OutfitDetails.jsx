@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Image as CachedImage } from 'react-native-expo-image-cache';
 import Header from '../Header';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuthentication } from '../../utils/hooks/useAuthentication';
 
 const OutfitDetails = ({ route }) => {
   const { item } = route.params;
@@ -80,8 +81,11 @@ const OutfitDetails = ({ route }) => {
       setLoading(true);
       const data = {
         isAIOutfit: true,
-        outfitId: outfit._id
+        outfitId: outfit._id,
+        season : "Summer"
       };
+      console.log(data)
+      console.log(user.uid)
       const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/outfit/logOutfitUsage/${user.uid}`, data, {
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +97,7 @@ const OutfitDetails = ({ route }) => {
           'Great Choice',
           'Enjoy your day!',
           [
-            { text: 'OK', onPress: () => navigation.navigate('home') }
+            { text: 'OK', onPress: () => navigation.navigate('Home') }
           ]
         );
       }
@@ -186,7 +190,7 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 300,
-    width: '100%',
+    width: '100%',  
     borderRadius: 15,
     marginBottom: 20,
   },

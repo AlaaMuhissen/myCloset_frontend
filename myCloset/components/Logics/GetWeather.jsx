@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import axios from 'axios';
 import WeatherCard from '../Cards/WeatherCard';
+import { Skeleton } from 'moti/skeleton';
 
 export default function GetWeather({city }) {
   const [weatherData, setWeatherData] = useState(null);
@@ -31,7 +32,9 @@ export default function GetWeather({city }) {
   return (
     <View style={{ marginBottom: 5 }}>
       {weatherData && <WeatherCard weatherData={weatherData} />}
-      {loading && <Text>Loading...</Text>}
+      {loading && (
+        <Skeleton height={50} width="100%" colorMode="light" />
+      )}
       {error && <Text>{error}</Text>}
     </View>
   );

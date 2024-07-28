@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Modal, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Image as CachedImage } from 'react-native-expo-image-cache';
 import { Ionicons } from "@expo/vector-icons";
+import { COLORS } from '../../constants';
 
 const ItemModal = ({ visible, selectedItem, selectedCategory, selectedSubCategory, handleEditItem, handleCloseModal }) => {
   const seasons = ['Spring', 'Summer', 'Autumn', 'Winter'];
@@ -10,10 +11,10 @@ const ItemModal = ({ visible, selectedItem, selectedCategory, selectedSubCategor
     <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={handleCloseModal}>
       <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', justifyContent: 'center', alignItems: 'center' }}>
         <View style={{ width: '90%', backgroundColor: 'white', borderRadius: 20, padding: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3, shadowRadius: 10, elevation: 10 }}>
-          <TouchableOpacity style={{ position: 'absolute', top: 10, right: 10, zIndex: 1 }} onPress={handleEditItem}>
+          <TouchableOpacity style={{ position: 'absolute', top: 20, right: 20, zIndex: 10 }} onPress={handleEditItem}>
             <Ionicons name="pencil-outline" size={24} color="#333" />
           </TouchableOpacity>
-          <ScrollView contentContainerStyle={{ alignItems: 'center' }}>
+          <ScrollView contentContainerStyle={{ alignItems: 'center',padding:10 }}>
             <CachedImage style={{ width: '100%', height: 300, borderRadius: 20, marginBottom: 20 }} uri={selectedItem.imgUrl} resizeMode="contain" />
             <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#333', marginBottom: 20 }}>Item Details</Text>
             <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
@@ -52,7 +53,7 @@ const ItemModal = ({ visible, selectedItem, selectedCategory, selectedSubCategor
                 ))}
               </View>
             </View>
-            <TouchableOpacity style={{ backgroundColor: '#FD3A69', padding: 15, borderRadius: 30, alignItems: 'center', marginTop: 20, width: '100%' }} onPress={handleCloseModal}>
+            <TouchableOpacity style={{ backgroundColor: COLORS.tertiary, padding: 15, borderRadius: 30, alignItems: 'center', marginTop: 20, width: '100%' }} onPress={handleCloseModal}>
               <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>Close</Text>
             </TouchableOpacity>
           </ScrollView>

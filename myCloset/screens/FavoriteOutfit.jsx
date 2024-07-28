@@ -8,6 +8,7 @@ import Header from '../components/Header';
 
 import outfitPlaceHolder from '../assets/outfitPlaceHolder.jpg'
 import { useAuthentication } from '../utils/hooks/useAuthentication';
+import { Skeleton } from 'moti/skeleton';
 
 function FavoriteOutfit() {
     const [outfits, setOutfits] = useState([]);
@@ -168,7 +169,11 @@ function FavoriteOutfit() {
                       </View>
                   </View>
                   {loading ? (
-                      <Text>Loading ...</Text>
+                     <View style={styles.skeletonContainer}>
+                     {[...Array(10)].map((_, i) => (
+                       <Skeleton key={i} colorMode="light" height={100} width={100}/>
+                     ))} 
+                   </View>
                   ) : (
                       outfits.length > 0 ? (
                           <View style={styles.outfitsSection}>
@@ -344,7 +349,17 @@ function FavoriteOutfit() {
       textAlign: 'center',
       margin: 20,
       fontFamily: FONT.regular,
-    }
+    },
+
+  skeletonContainer: {
+    padding: 4,
+    marginTop : 30,
+    justifyContent: 'space-between',
+    alignItems : 'flex-start',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap :10
+  },
   });
 
 

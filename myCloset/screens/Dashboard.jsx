@@ -30,6 +30,7 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -69,12 +70,17 @@ const Dashboard = () => {
         <Header name={"Hi Fashionista"} icon={'calendar'} onIconPress={handleShowCalendar}/>
         <View style={{  marginHorizontal: 15, gap: 20 }}>
           {isLoading ? (
-            <Skeleton height={50} width={350} colorMode="light" />
+            <Skeleton height={80} width="100%" colorMode="light" />
           ) : (
             <InfoCard />
           )}
           <TouchableOpacity onPress={() => handleSearch()}>
+          {isLoading ? (
+            <Skeleton height={40} width="100%" colorMode="light" />
+          ) : (
             <SearchBar />
+          )}
+           
           </TouchableOpacity>
           <View style={{ gap: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <View>
@@ -92,7 +98,7 @@ const Dashboard = () => {
           <View style={{ gap: 20 }}>
             {isLoading ? (
               <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}> 
-                <Skeleton width={300} height={200} colorMode="light" />
+                <Skeleton width="100%" height={400} colorMode="light" />
               </View>
             ) : (
               <AIOutfitSuggestions />

@@ -21,7 +21,7 @@ const EditOutfit = () => {
     const route = useRoute();
     const navigation = useNavigation();
     const { season, outfit } = route.params;
-  
+    // console.log(season , outfit)
     
     const [selectedCategory, setSelectedCategory] = useState('Tops');
     const [clothesData, setClothesData] = useState(new Map());
@@ -63,9 +63,14 @@ const EditOutfit = () => {
         setLoading(false);
       }
     };
+
+
+    // useEffect(() => {
+    //   fetchData();
+    // }, []);
     useEffect(() => {
       fetchData();
-    }, []);
+    }, [user]);
   
     useEffect(() => {
       const newOutfitItems = itemsId?.map((itemId) => {
@@ -255,10 +260,7 @@ const EditOutfit = () => {
             <SubCategoryList subOptions={selectedCategoryData.subOptions} handleSubCategory={handleSubCategory} />
           )}
           <ScrollView style={styles.clothesGridContainer}>
-            {console.log("clothesData => ", clothesData )}
-            {console.log("selectedCategory => ", selectedCategory )}
-            {console.log("selectedSubCategory => ", selectedSubCategory )}
-            <ClothesGrid
+            {clothesData.size !== 0 && <ClothesGrid
               clothesData={clothesData}
               selectedCategory={selectedCategory}
               selectedSubCategory={selectedSubCategory}
@@ -267,7 +269,7 @@ const EditOutfit = () => {
               refreshing={refreshing}
               onRefresh={onRefresh}
               isSelectionMode= {false}
-            />
+            />}
           </ScrollView>
         </View>
       </View>

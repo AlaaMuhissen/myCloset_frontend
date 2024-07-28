@@ -7,6 +7,7 @@ import { COLORS ,FONT} from '../constants';
 import Header from '../components/Header';
 import outfitPlaceHolder from '../assets/outfitPlaceHolder.jpg'
 import { useAuthentication } from '../utils/hooks/useAuthentication';
+import { Skeleton } from 'moti/skeleton';
 
 const ShowOutfits = () => {
   const [outfits, setOutfits] = useState([]);
@@ -157,44 +158,46 @@ const ShowOutfits = () => {
        
       </View>
 }
-        {loading ? (
-          <Text>Loading ...</Text>
-        ) : (
-          outfits.length > 0 ? (
-            <View style={styles.outfitsSection}>
-            {outfits.map((outfit, index) => (
-              <TouchableOpacity key={index} onLongPress={() => handleLongPress(outfit._id)} onPress={() => handleItemPress(outfit)}>
-                <View style={[styles.outfitContainer, selectedItems.has(outfit._id) && styles.selectedOutfitContainer]}>
-                  <TouchableOpacity style={styles.editIcon} onPress={() => handleItemPress(outfit)}>
-                    <FontAwesome name="edit" size={24} color= {COLORS.secondary} />
-                  </TouchableOpacity>
-                  <Image source={{ uri: outfit.imgUrl }} style={styles.outfitImage} />
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-          
-          
+{loading ? (
+            <View style={styles.skeletonContainer}>
+              {[...Array(10)].map((_, i) => (
+                <Skeleton key={i} colorMode="light" height={100} width={100}/>
+              ))} 
+            </View>
           ) : (
-            <View style={styles.emptyStateContainer}>
-            <Image
-                source={outfitPlaceHolder}
-                style={styles.illustration}
-            />
-            <Text style={styles.noOutfitsText}>
-                You haven't added any favorite outfits yet. Start adding your favorite looks!
-            </Text>
-            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddOutfit')}>
-                <Ionicons name="camera" size={24} color="#fff" />
-                <Text style={styles.addButtonText}>Add Outfit</Text>
-            </TouchableOpacity>
+            outfits.length > 0 ? (
+              <View style={styles.outfitsSection}>
+                {outfits.map((outfit, index) => (
+                  <TouchableOpacity key={index} onLongPress={() => handleLongPress(outfit._id)} onPress={() => handleItemPress(outfit)}>
+                    <View style={[styles.outfitContainer, selectedItems.has(outfit._id) && styles.selectedOutfitContainer]}>
+                      <TouchableOpacity style={styles.editIcon} onPress={() => handleItemPress(outfit)}>
+                        <FontAwesome name="edit" size={24} color={COLORS.secondary} />
+                      </TouchableOpacity>
+                      <Image source={{ uri: outfit.imgUrl }} style={styles.outfitImage} />
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ) : (
+              <View style={styles.emptyStateContainer}>
+                <Image
+                  source={outfitPlaceHolder}
+                  style={styles.illustration}
+                />
+                <Text style={styles.noOutfitsText}>
+                  You haven't added any favorite outfits yet. Start adding your favorite looks!
+                </Text>
+                <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddOutfit')}>
+                  <Ionicons name="camera" size={24} color="#fff" />
+                  <Text style={styles.addButtonText}>Add Outfit</Text>
+                </TouchableOpacity>
+              </View>
+            )
+          )}
         </View>
-          )
-        )}
-      </View>
-    </ScrollView>
-  </View>
-);
+      </ScrollView>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -284,13 +287,13 @@ const styles = StyleSheet.create({
   outfitsSection: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     padding: 5,
   },
   outfitContainer: {
     flexDirection: 'row',
     marginVertical: 10,
-    maxWidth: 100,
+   
     position: 'relative',
     margin: 5,
   },
@@ -335,13 +338,24 @@ const styles = StyleSheet.create({
     color: COLORS.white,
   },
   selectedOutfitContainer: {
-    borderColor: COLORS.primary,
+    borderColor: COLORS.tertiary,
+    padding :5,
     borderWidth: 2,
+    borderRadius: 5
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 10,
+  },
+  skeletonContainer: {
+    padding: 4,
+    marginTop : 30,
+    justifyContent: 'space-between',
+    alignItems : 'flex-start',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap :10
   },
 });
 

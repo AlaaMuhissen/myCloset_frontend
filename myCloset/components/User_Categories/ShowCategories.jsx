@@ -14,7 +14,7 @@ import OutfitModal from "./OutfitModel.jsx";
 import { useNavigation } from "@react-navigation/native";
 import { COLORS ,FONT } from "../../constants";
 import { useAuthentication } from "../../utils/hooks/useAuthentication.js";
-
+import { Skeleton } from 'moti/skeleton';
 
 const ShowCategories = () => {
   const [selectedCategory, setSelectedCategory] = useState('Tops');
@@ -41,7 +41,7 @@ const ShowCategories = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}`);
+      const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user?.uid}`);
       setClothesData(new Map(Object.entries(response.data.categories)));
       console.log("clothe data " , clothesData)
     } catch (error) {
@@ -336,55 +336,62 @@ const ShowCategories = () => {
 
   return (
     <>
-      <CategoryList selectedCategory={selectedCategory} handleCardPress={handleCardPress} withIcon={true}/>
+      <CategoryList selectedCategory={selectedCategory} handleCardPress={handleCardPress} withIcon={true} />
       <View>
         {selectedCategory && (
           <SubCategoryList subOptions={selectedCategoryData.subOptions} handleSubCategory={handleSubCategory} isSmall={false} />
         )}
       </View>
 
-      {clothesData.length !== 0 && Object.keys(clothesData.get(selectedCategory)[selectedSubCategory]).length !== 0 ? (
-  <>
-    {!isSelectionMode && <Button title="Select" onPress={handleEnableSelectionMode} />}
-    {isSelectionMode && (
-      <View style={styles.buttonContainer}>
-        {isSelectedAll ? (
-          <Button title="Select All" onPress={() => selectAllItems()} />
+      {loading ? (
+        <View style={styles.skeletonContainer}>
+            {[...Array(10)].map((_, i) => (
+    <Skeleton key={i} colorMode="light" height={100} width={100} />
+  ))}
+        </View>
+      ) : (
+        clothesData.length !== 0 && Object.keys(clothesData.get(selectedCategory)[selectedSubCategory]).length !== 0 ? (
+          <>
+            {!isSelectionMode && <Button title="Select" onPress={handleEnableSelectionMode} />}
+            {isSelectionMode && (
+              <View style={styles.buttonContainer}>
+                {isSelectedAll ? (
+                  <Button title="Select All" onPress={() => selectAllItems()} />
+                ) : (
+                  <Button title="Deselect All" onPress={() => deselectAllItems()} />
+                )}
+                <TouchableOpacity onPress={checkItemsInOutfit}>
+                  <Ionicons name="trash-outline" color={'red'} size={24} style={styles.icon} />
+                </TouchableOpacity>
+                {isSelectedAll && <Button title="Cancel" onPress={handleCancelSelection} />}
+              </View>
+            )}
+            <ClothesGrid
+              loading={loading}
+              clothesData={clothesData}
+              selectedCategory={selectedCategory}
+              selectedSubCategory={selectedSubCategory}
+              handleImagePress={handleImagePress}
+              handleLongPress={handleLongPress}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              selectedItems={selectedItems}
+              isSelectionMode={isSelectionMode}
+            />
+          </>
         ) : (
-          <Button title="Deselect All" onPress={() => deselectAllItems()} />
-        )}
-        <TouchableOpacity onPress={checkItemsInOutfit}>
-          <Ionicons name="trash-outline" color={'red'} size={24} style={styles.icon} />
-        </TouchableOpacity>
-        {isSelectedAll && <Button title="Cancel" onPress={handleCancelSelection} />}
-      </View>
-    )}
-    <ClothesGrid
-      loading={loading}
-      clothesData={clothesData}
-      selectedCategory={selectedCategory}
-      selectedSubCategory={selectedSubCategory}
-      handleImagePress={handleImagePress}
-      handleLongPress={handleLongPress}
-      refreshing={refreshing}
-      onRefresh={onRefresh}
-      selectedItems={selectedItems}
-      isSelectionMode={isSelectionMode}
-    />
-  </>
-) : (
-  <View style={styles.emptyStateContainer}>
-    <Image 
-     source = {ClothePlaceHolder}
-     style={styles.illustration} />
-    <Text style={styles.emptyStateText}> Your wardrobe is empty. Add your first item to start building your collection!</Text>
-    <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddClothes')}>
-      <Ionicons name="add" size={24} color="#fff" />
-      <Text style={styles.addButtonText}>Add Clothes</Text>
-    </TouchableOpacity>
-  </View>
-)}
-
+          <View style={styles.emptyStateContainer}>
+            <Image
+              source={ClothePlaceHolder}
+              style={styles.illustration} />
+            <Text style={styles.emptyStateText}>Your wardrobe is empty. Add your first item to start building your collection!</Text>
+            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddClothes')}>
+              <Ionicons name="add" size={24} color="#fff" />
+              <Text style={styles.addButtonText}>Add Clothes</Text>
+            </TouchableOpacity>
+          </View>
+        )
+      )}
 
       {selectedItem && !editingMode && (
         <ItemModal
@@ -397,14 +404,14 @@ const ShowCategories = () => {
         />
       )}
 
-    {modalOutfitVisible && (
-            <OutfitModal
-              visible={modalOutfitVisible}
-              outfitImgArray={outfitsImg}
-              handleCloseModal={handleCloseOutfitModal}
-              handleConfirmDelete = {handleConfirmDelete}
-            />
-          )}
+      {modalOutfitVisible && (
+        <OutfitModal
+          visible={modalOutfitVisible}
+          outfitImgArray={outfitsImg}
+          handleCloseModal={handleCloseOutfitModal}
+          handleConfirmDelete={handleConfirmDelete}
+        />
+      )}
       {selectedItem && editingMode && (
         <EditClothingDetailsModal
           visible={modalVisible}
@@ -615,6 +622,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 10,
     fontFamily: FONT.bold,
+  },
+  skeletonContainer: {
+    padding: 4,
+    marginTop : 30,
+    justifyContent: 'space-between',
+    alignItems : 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap :10
   },
 });
 

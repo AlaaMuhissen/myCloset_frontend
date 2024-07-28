@@ -35,17 +35,19 @@ export const styles = StyleSheet.create({
   },
   accordionIcon: {
     margin: 0,
+    color:COLORS.tertiary
   },
   checkboxItem: {
+  
     backgroundColor: 'white',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.divider,
+    borderBottomColor: '#ccc',
     paddingVertical: 8,
     paddingHorizontal: 16,
   },
   checkboxLabel: {
     fontSize: 14,
-    color: COLORS.secondaryText,
+    color: COLORS.primary,
   },
   header: {
     fontSize: 18,
@@ -60,6 +62,8 @@ export const styles = StyleSheet.create({
   },
   chip: {
     margin: 4,
+    backgroundColor : '#ccc',
+    // color : COLORS.white
   },
   divider: {
     marginVertical: 16,
@@ -69,6 +73,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginVertical: 8,
+    paddingVertical :10
   },
   colorCircle: {
     width: 30,
@@ -124,6 +129,7 @@ export const styles = StyleSheet.create({
   },
   closeButton: {
     marginTop: 16,
+    backgroundColor :COLORS.tertiary
     
   },
   resultsHeader: {

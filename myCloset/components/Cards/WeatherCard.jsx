@@ -1,8 +1,23 @@
 import React from 'react';
 import { View, Text, Image, ScrollView } from 'react-native';
 import { COLORS, FONT } from '../../constants';
+import { Skeleton } from 'moti/skeleton';
 
-const WeatherCard = ({ weatherData }) => {
+const WeatherCard = ({ weatherData, loading }) => {
+  if (loading) {
+    return (
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {[...Array(3)].map((_, index) => (
+          <Skeleton key={index} height={100} width={120} colorMode="light" style={styles.card}>
+              <Skeleton height={12} width={80} style={styles.skeletonDateText} />
+              <Skeleton height={10} width={100} style={styles.skeletonTempText} />
+              <Skeleton height={10} width={10} style={styles.skeletonWeatherIcon} radius="round" />
+          </Skeleton>
+        ))}
+      </ScrollView>
+    );
+  }
+
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       {weatherData.forecast.forecastday.map((day, index) => (
@@ -64,6 +79,15 @@ const styles = {
   weatherIcon: {
     width: 40,
     height: 40,
+    marginLeft: 4,
+  },
+  skeletonDateText: {
+    marginBottom: 8,
+  },
+  skeletonTempText: {
+    marginBottom: 5,
+  },
+  skeletonWeatherIcon: {
     marginLeft: 4,
   },
 };
