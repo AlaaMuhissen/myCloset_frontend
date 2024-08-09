@@ -29,7 +29,7 @@ const SettingsScreen = () => {
           }
         }
       } catch (error) {
-        console.error('Error fetching outfits:', error);
+        // console.error('Error fetching outfits:', error);
         setClothesNumber(0);
       } finally {
         setLoading(false);

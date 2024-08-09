@@ -49,7 +49,7 @@ function FavoriteOutfit() {
           }
         }
       } catch (error) {
-        console.error('Error fetching outfits:', error);
+        // console.error('Error fetching outfits:', error);
         setOutfits([]);
       } finally {
         setLoading(false);
@@ -97,7 +97,7 @@ function FavoriteOutfit() {
           console.log(response.data);
           fetchOutfits(); 
         } catch (error) {
-          console.error('Error fetching Fav outfits:', error);
+          // console.error('Error fetching Fav outfits:', error);
          
         } finally {
           setLoading(false);

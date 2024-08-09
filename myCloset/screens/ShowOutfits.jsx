@@ -46,7 +46,7 @@ const ShowOutfits = () => {
         }
       }
     } catch (error) {
-      console.error('Error fetching outfits:', error);
+      // console.error('Error fetching outfits:', error);
       setOutfits([]);
     } finally {
       setLoading(false);

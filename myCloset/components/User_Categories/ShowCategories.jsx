@@ -45,7 +45,7 @@ const ShowCategories = () => {
       setClothesData(new Map(Object.entries(response.data.categories)));
       console.log("clothe data " , clothesData)
     } catch (error) {
-      console.error('Error fetching data:', error);
+      // console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
@@ -278,7 +278,7 @@ const ShowCategories = () => {
         }
      
     }catch(error){
-      console.error('Error in deleting: ' , error)
+      // console.error('Error in deleting: ' , error)
       Alert.alert('Error', 'An error occurred while deleting outfits.');
       setLoading(false);
     }

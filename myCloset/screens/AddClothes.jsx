@@ -57,7 +57,7 @@ const adjustImageQuality = async (uri) => {
     );
     return adjustedImage.uri;
   } catch (err) {
-    console.error('Justed Img error:', err);
+    // console.error('Justed Img error:', err);
     alert('Failed to upload and process photo');
     return null;
   }
@@ -82,7 +82,7 @@ const handleChoosePhoto = async () => {
       }
     }
   } catch (error) {
-    console.error('Image picker error:', error);
+    // console.error('Image picker error:', error);
     alert('Failed to pick an image');
   }
 };
@@ -135,7 +135,7 @@ const handleUploadPhoto = async (photo) => {
       setColorPalette(apiResponse.data.color_palette);
       setModalVisible(true);
     } catch (error) {
-      console.error('Upload error:', error);
+      // console.error('Upload error:', error);
       alert('Failed to upload and process photo');
     } finally {
       setLoading(false);
@@ -172,7 +172,7 @@ const handleUploadPhoto = async (photo) => {
         fabric: selectedFabric,
         tags : selectedTags
       }
-      console.log(temp)
+      // console.log('========== uid: "user.uid)
       const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}/${selectedCategory}/${selectedSubCategory}`, {
         imgUrl: result.image_without_background_url,
         seasons: selectedSeasons,
@@ -284,7 +284,7 @@ const handleUploadPhoto = async (photo) => {
         )}
         {loading && (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={'blue'} />
+            <ActivityIndicator size="large" color={'pink'} />
             <Text style={styles.loadingText}>{`Uploading: ${uploadProgress}%`}</Text>
           </View>
         )}
@@ -362,6 +362,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingLeft :20,
     marginVertical: 20,
   },
   loadingText: {

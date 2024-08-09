@@ -23,7 +23,7 @@ export default function App() {
       try {
         await fetchFonts();
       } catch (err) {
-        console.error(err);
+        // console.error(err);
       } finally {
         setFontLoaded(true);
         await SplashScreen.hideAsync();

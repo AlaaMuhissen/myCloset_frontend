@@ -30,7 +30,7 @@ const HistoryCalendar = () => {
           }
         }
       } catch (error) {
-        console.error('Error fetching outfits:', error);
+        // console.error('Error fetching outfits:', error);
         setHistory([]);
       } finally {
         setLoading(false);

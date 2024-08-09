@@ -59,7 +59,7 @@ const AddOutfit = () => {
         setClothesData(new Map(Object.entries(response.data.categories)));
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
+      // console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }

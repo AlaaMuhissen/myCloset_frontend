@@ -27,7 +27,7 @@ const AIOutfitSuggestions = () => {
           const outfitsArray = Object.values(response.data);
           setOutfits(outfitsArray);
         } catch (error) {
-          console.error('Error fetching data:', error);
+          // console.error('Error fetching data:', error);
         }
       }
     };
@@ -71,7 +71,7 @@ const AIOutfitSuggestions = () => {
         <>
           <View style={styles.textContainer}>
             <Text style={styles.headerText}>
-              Welcome to Your Virtual Closet
+              Welcome to Your Virtual Wardrobe
             </Text>
           </View>
           <View style={styles.container}>

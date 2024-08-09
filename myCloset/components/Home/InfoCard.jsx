@@ -18,8 +18,8 @@ const InfoCard = () => {
       shadowRadius: 3.84,
       elevation: 5
     }}>
-      <Text style={{ fontSize: 18, fontWeight: 'bold', color: COLORS.white, fontFamily: FONT.bold }}>3 outfits planned this week!</Text>
-      <Text style={{ fontSize: 14, color: COLORS.white, fontFamily: FONT.regular }}>75% of your outfit goals achieved</Text>
+      <Text style={{ fontSize: 18, fontWeight: 'bold', color: COLORS.white, fontFamily: FONT.bold }}>1 outfit planned this week!</Text>
+      <Text style={{ fontSize: 14, color: COLORS.white, fontFamily: FONT.regular }}>85% of your outfit goals achieved</Text>
     </View>
   )
 }

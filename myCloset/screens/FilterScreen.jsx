@@ -39,7 +39,7 @@ const FilterScreen = () => {
           setAllColors(response.data);
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        // console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }

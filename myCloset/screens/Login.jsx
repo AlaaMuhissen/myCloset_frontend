@@ -86,15 +86,15 @@ export default function LoginWithEmail() {
         Alert.alert('Please try again!', 'Your email/password is incorrect', [
             {text: 'OK', onPress: () => console.log('OK Pressed')},
           ]);
-      console.log(error.message);
+      // console.log(error.message);
     }
   };
 
-  useEffect(() => {
-    // if (user) {
-    //   navigation.navigate('Home');
-    // }
-  }, [user, navigation]);
+  // useEffect(() => {
+  //   // if (user) {
+  //   //   navigation.navigate('Home');
+  //   // }
+  // }, [user, navigation]);
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
