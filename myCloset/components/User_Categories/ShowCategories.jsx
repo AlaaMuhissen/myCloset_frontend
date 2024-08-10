@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import { COLORS ,FONT } from "../../constants";
 import { useAuthentication } from "../../utils/hooks/useAuthentication.js";
 import { Skeleton } from 'moti/skeleton';
+import { useUser } from "@clerk/clerk-expo";
 
 const ShowCategories = () => {
   const [selectedCategory, setSelectedCategory] = useState('Tops');
@@ -37,7 +38,7 @@ const ShowCategories = () => {
   const [outfitsImg, setOutfitsImg] = useState([]);
   const [modalOutfitVisible, setModalOutfitVisible] = useState(false);
   const navigation = useNavigation();
-  const { user } = useAuthentication();
+  const { user } = useUser();
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -182,7 +183,7 @@ const ShowCategories = () => {
         tags: selectedTags
       };
   
-      const response = await axios.put(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}/${selectedCategory}/${selectedSubCategory}/${selectedItem._id}`, {
+      const response = await axios.put(`https://mycloset-backend-hnmd.onrender.com/api/closet/userUID/${selectedCategory}/${selectedSubCategory}/${selectedItem._id}`, {
         seasons: selectedSeasons,
         colors: colorPalette,
         fabric: selectedFabric,
@@ -263,7 +264,7 @@ const ShowCategories = () => {
       const data = {
         itemsId: Array.from(selectedItems)
       }
-      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/getOutfitIdsContainingItems`, data);
+      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/outfit/userUID/getOutfitIdsContainingItems`, data);
     
 
         setOutfitsImg(response.data.outfitImg)
@@ -292,7 +293,7 @@ const ShowCategories = () => {
         // Loop through the outfit array to delete each outfit by season and outfitsId
           for (const outfitItem of outfit) {
             const { season, outfitsId } = outfitItem;
-            const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/${season}`, {
+            const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/outfit/userUID/${season}`, {
               data: { itemsId: outfitsId }
             });
           }}
@@ -303,7 +304,7 @@ const ShowCategories = () => {
       }
    
       // After deleting outfits, delete the clothing items
-      const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}/${selectedCategory}/${selectedSubCategory}`, {
+      const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/closet/userUID/${selectedCategory}/${selectedSubCategory}`, {
         data: { itemsId: Array.from(selectedItems) }
       });
   

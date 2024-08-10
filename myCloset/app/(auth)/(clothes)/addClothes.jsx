@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Button, ActivityIndicator, Image, Text, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
-import { categories } from '../assets/data/categories';
-import EditClothingDetailsModal from '../components/AddClothes/ClothingDetailsModal';
-import { uploadImage } from '../config/cloudinary';
-import Header from '../components/Header';
-import { COLORS, FONT } from '../constants';
+import { categories } from '../../../assets/data/categories';
+import EditClothingDetailsModal from '../../../components/AddClothes/ClothingDetailsModal';
+import { uploadImage } from '../../../config/cloudinary';
+import Header from '../../../components/Header';
+import { COLORS, FONT } from '../../../constants';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { fabrics } from '../assets/data/fabrics';
+import { fabrics } from '../../../assets/data/fabrics';
 import { useNavigation } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import clotheHolder from '../assets/default-image-clothe.jpg'
+import clotheHolder from '../../../assets/default-image-clothe.jpg'
 import { Ionicons } from '@expo/vector-icons';
-import { useAuthentication } from '../utils/hooks/useAuthentication';
+import { useAuthentication } from '../../../utils/hooks/useAuthentication';
 const popularTags = ['#Casual', '#Formal', '#Business', '#Party', '#Sports', '#Wedding', '#Vacation', '#Beach', '#Date_Night', '#Festive'];
 const AddClothes = () => {
   const navigation = useNavigation();
@@ -29,8 +29,7 @@ const AddClothes = () => {
   const [allSeasonsChecked, setAllSeasonsChecked] = useState(true);
   const [selectedFabric, setSelectedFabric] = useState(fabrics[0].fabricName);
   const [selectedTags, setSelectedTags] = useState([popularTags[0]]);
-  const { user } = useAuthentication();
-  console.log(user)
+
 
 
   const requestPermission = async (permissionFunc) => {
@@ -173,7 +172,7 @@ const handleUploadPhoto = async (photo) => {
         tags : selectedTags
       }
       // console.log('========== uid: "user.uid)
-      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}/${selectedCategory}/${selectedSubCategory}`, {
+      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/closet/userUID/${selectedCategory}/${selectedSubCategory}`, {
         imgUrl: result.image_without_background_url,
         seasons: selectedSeasons,
         colors: colorPalette,

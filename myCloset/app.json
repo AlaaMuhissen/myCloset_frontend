@@ -3,6 +3,7 @@
     "name": "myCloset",
     "slug": "myCloset",
     "version": "1.0.0",
+    "scheme": "acme",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -26,6 +27,7 @@
       "package": "com.alaa.mycloset"
     },
     "web": {
+      "bundler": "metro",
       "favicon": "./assets/favicon.png"
     },
     "plugins": [

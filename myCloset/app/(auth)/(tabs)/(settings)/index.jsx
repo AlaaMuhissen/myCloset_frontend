@@ -2,26 +2,32 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS } from '../constants';
+import { COLORS } from '../../../../constants';
 import { useNavigation } from '@react-navigation/native';
-import { getAuth, signOut } from 'firebase/auth';
-import { useAuthentication } from '../utils/hooks/useAuthentication';
+import { useAuth } from '@clerk/clerk-expo';
+import { useAuthentication } from '../../../../utils/hooks/useAuthentication';
 import { Skeleton } from 'moti/skeleton';
-
-const auth = getAuth();
+import { useUser } from '@clerk/clerk-expo';
+// const auth = getAuth();
 const SettingsScreen = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
+  const { user } = useUser();
   const [clothesNumber, setClothesNumber] = useState(0);
-  const { user } = useAuthentication();
+  const { signOut } = useAuth();
   console.log(user);
   
+  const doLogout = () => {
+    signOut();
+  };
+
+
   useEffect(() => {
     const fetchClothesNumber = async () => {
       try {
         if (user) {
           setLoading(true);
-          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}/clothesNumber`);
+          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/userUID/clothesNumber`);
           if (response.data) {
             setClothesNumber(response.data.clothesNumber);
           } else {
@@ -38,17 +44,17 @@ const SettingsScreen = () => {
     fetchClothesNumber();
   }, [user]);
 
-  const logOut = () => {
-    signOut(auth);
-  };
+  // const logOut = () => {
+  //   signOut(auth);
+  // };
 
-  const handleOptionPress = (screenName) => {
-    if (screenName === "Sign Out") {
-      logOut();
-    } else {
-      navigation.navigate(screenName);
-    }
-  };
+  // const handleOptionPress = (screenName) => {
+  //   if (screenName === "Sign Out") {
+  //     logOut();
+  //   } else {
+  //     navigation.navigate(screenName);
+  //   }
+  // };
 
   const renderSection = (title, options) => (
     <View style={styles.section}>
@@ -78,7 +84,7 @@ const SettingsScreen = () => {
             {loading ? (
               <Skeleton colorMode="light" height={70} width={70}  radius="round" />
             ) : (
-              user && <Image source={user.photoURL ? { uri: user.photoURL } : require('../assets/images/defultAvatar.png')} style={styles.userPic} />
+              user && <Image source={user.photoURL ? { uri: user.photoURL } : require('../../../../assets/images/defultAvatar.png')} style={styles.userPic} />
             )}
             <View style={{gap:5}}>
               {loading ? (

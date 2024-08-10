@@ -3,16 +3,17 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Dimensions
 import axios from 'axios';
 import { DraxProvider } from 'react-native-drax';
 import * as FileSystem from 'expo-file-system';
-import ReceivingZone from '../components/Outfit/ReceivingZone';
-import CategoryList from '../components/User_Categories/CategoryList';
-import SubCategoryList from '../components/User_Categories/SubCategoryList';
-import ClothesGrid from '../components/User_Categories/ClothesGrid.jsx';
-import { categories } from '../assets/data/categories';
-import { uploadImage } from '../config/cloudinary';
-import { COLORS } from '../constants';
+import ReceivingZone from '../../../components/Outfit/ReceivingZone';
+import CategoryList from '../../../components/User_Categories/CategoryList';
+import SubCategoryList from '../../../components/User_Categories/SubCategoryList';
+import ClothesGrid from '../../../components/User_Categories/ClothesGrid.jsx';
+import { categories } from '../../../assets/data/categories';
+import { uploadImage } from '../../../config/cloudinary';
+import { COLORS } from '../../../constants';
 import { useNavigation } from '@react-navigation/native';
-import Header from '../components/Header';
-import { useAuthentication } from '../utils/hooks/useAuthentication.js';
+import Header from '../../../components/Header';
+import { useAuthentication } from '../../../utils/hooks/useAuthentication.js';
+import { useUser } from '@clerk/clerk-expo';
 const { height } = Dimensions.get('window');
 
 const AddOutfit = () => {
@@ -28,7 +29,7 @@ const AddOutfit = () => {
   const [captureMode, setCaptureMode] = useState(false);
   const receivingZoneRef = useRef();
   const [refreshing, setRefreshing] = useState(false);
-  const { user } = useAuthentication();
+  const { user } = useUser();
   const [outfitSeason, setOutfitSeason] = useState(null); // Default is null, prompting the user to choose
   const resetPosition = (id) => {
     setPositions(prevPositions => ({
@@ -55,7 +56,7 @@ const AddOutfit = () => {
       if(user){
 
         setLoading(true);
-        const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}`);
+        const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/userUID`);
         setClothesData(new Map(Object.entries(response.data.categories)));
       }
     } catch (error) {
@@ -138,7 +139,7 @@ const AddOutfit = () => {
         };
 
         const response = await axios.post(
-          `https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/${season}`,
+          `https://mycloset-backend-hnmd.onrender.com/api/outfit/userUID/${season}`,
           state,
           { headers: { 'Content-Type': 'application/json' } }
         );

@@ -2,21 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions ,Image} from 'react-native';
 import { BarChart, PieChart } from 'react-native-chart-kit';
 import { Card, Title, Paragraph } from 'react-native-paper';
-import { COLORS, FONT } from '../constants';
+import { COLORS, FONT } from '../../../constants';
 import Carousel from 'react-native-snap-carousel';
-import { useAuthentication } from '../utils/hooks/useAuthentication';
-import Header from '../components/Header';
-
+import { useAuthentication } from '../../../utils/hooks/useAuthentication';
+import Header from '../../../components/Header';
+import { useAuth } from '@clerk/clerk-expo';
 const StatisticsScreen = () => {
   const [statistics, setStatistics] = useState(null);
   const screenWidth = Dimensions.get('window').width;
-  const { user } = useAuthentication();
+  const { user } = useUser();
   useEffect(() => {
     // Fetch the statistics data from your API
     const fetchData = async () => {
       try {
         if(user){
-          const response = await fetch(`https://mycloset-backend-hnmd.onrender.com/api/closet/user-statistics/${user.uid}/1`);
+          const response = await fetch(`https://mycloset-backend-hnmd.onrender.com/api/closet/user-statistics/userUID/1`);
           const data = await response.json();
           setStatistics(data);
 

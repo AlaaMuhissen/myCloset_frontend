@@ -3,11 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Image, But
 import axios from 'axios';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { COLORS ,FONT} from '../constants';
-import Header from '../components/Header';
-import outfitPlaceHolder from '../assets/outfitPlaceHolder.jpg'
-import { useAuthentication } from '../utils/hooks/useAuthentication';
+import { COLORS ,FONT} from '../../../../constants';
+import Header from '../../../../components/Header';
+import outfitPlaceHolder from '../../../../assets/outfitPlaceHolder.jpg'
+import { useAuthentication } from '../../../../utils/hooks/useAuthentication';
 import { Skeleton } from 'moti/skeleton';
+import { useUser } from '@clerk/clerk-expo';
 
 const ShowOutfits = () => {
   const [outfits, setOutfits] = useState([]);
@@ -17,7 +18,7 @@ const ShowOutfits = () => {
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [isSelectedAll, setIsSelectedAll] = useState(false);
-  const { user } = useAuthentication();
+  const { user } = useUser();
 
   const getSeasonIcon = (season) => {
     switch (season) {
@@ -37,7 +38,7 @@ const ShowOutfits = () => {
     try {
       if(user){
         setLoading(true);
-        const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/${selectedSeason}`);
+        const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/outfit/userUID/${selectedSeason}`);
         if (response.data) {
           const fetchedOutfits = Object.values(response.data).flat();
           setOutfits(fetchedOutfits);
@@ -91,7 +92,7 @@ const ShowOutfits = () => {
 
     try{
       setLoading(true);
-      const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/${selectedSeason}`, {
+      const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/outfit/userUID/${selectedSeason}`, {
         data: { itemsId: Array.from(selectedItems) }
       });
       if (response.status === 200) {

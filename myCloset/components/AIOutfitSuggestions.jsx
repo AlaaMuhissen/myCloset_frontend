@@ -8,19 +8,20 @@ import { useNavigation } from '@react-navigation/native';
 import placeholder from '../assets/default-image-clothe.jpg';
 import { COLORS, FONT } from '../constants';
 import { useAuthentication } from '../utils/hooks/useAuthentication';
+import { useUser } from '@clerk/clerk-expo';
 
 const AIOutfitSuggestions = () => {
   const isCarousel = React.useRef(null);
   const [index, setIndex] = React.useState(0);
   const [outfits, setOutfits] = useState([]);
   const navigation = useNavigation();
-  const { user } = useAuthentication();
+  const { user } = useUser();
   
   useEffect(() => {
     const fetchData = async () => {
       if (user) {
         try {
-          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/Summer`);
+          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/outfit/userUID/Summer`);
           console.log(response.data);
           
           // Transform the object into an array of outfits

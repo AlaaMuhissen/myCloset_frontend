@@ -8,13 +8,14 @@ import { COLORS ,FONT } from '../../constants';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
 
 import moment from 'moment';
+import { useUser } from '@clerk/clerk-expo';
 
 const HistoryCalendar = () => {
   const [inPreviewMode, setInPreviewMode] = useState(false);
   const [history, setHistory] = useState([]);
   const [selectedDay, setSelectedDay] = useState(moment().format('YYYY-MM-DD'));
   const [loading, setLoading] = useState(true);
-  const { user } = useAuthentication();
+  const { user } = useUser();
   const today = moment().format('YYYY-MM-DD');
 
   useEffect(() => {
@@ -22,7 +23,7 @@ const HistoryCalendar = () => {
       try {
         if (user) {
           setLoading(true);
-          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/outfit/history/${user.uid}`);
+          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/outfit/history/userUID`);
           if (response.data) {
             setHistory(response.data);
           } else {

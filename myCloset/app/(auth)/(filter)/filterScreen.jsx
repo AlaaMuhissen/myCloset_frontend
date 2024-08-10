@@ -2,15 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { View, ScrollView, StyleSheet, Alert } from 'react-native';
 import { Button, Divider } from 'react-native-paper';
 import axios from 'axios';
-import Header from '../components/Header';
-import CategoryFilter from '../components/FilterCloset/CategoryFilter';
-import FabricFilter from '../components/FilterCloset/FabricFilter ';
-import SeasonFilter from '../components/FilterCloset/SeasonFilter';
-import TagFilter from '../components/FilterCloset/TagFilter';
-import ColorFilter from '../components/FilterCloset/ColorFilter';
-import FilterModal from '../components/FilterCloset/FilterModal';
-import { styles } from '../components/FilterCloset/styles';
-import { useAuthentication } from '../utils/hooks/useAuthentication';
+import Header from '../../../components/Header';
+import CategoryFilter from '../../../components/FilterCloset/CategoryFilter';
+import FabricFilter from '../../../components/FilterCloset/FabricFilter ';
+import SeasonFilter from '../../../components/FilterCloset/SeasonFilter';
+import TagFilter from '../../../components/FilterCloset/TagFilter';
+import ColorFilter from '../../../components/FilterCloset/ColorFilter';
+import FilterModal from '../../../components/FilterCloset/FilterModal';
+import { styles } from '../../../components/FilterCloset/styles';
+import { useAuthentication } from '../../../utils/hooks/useAuthentication';
+import { useUser } from '@clerk/clerk-expo';
 
 const FilterScreen = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -28,14 +29,14 @@ const FilterScreen = () => {
   const [isSeasonCollapsed, setIsSeasonCollapsed] = useState(true);
   const [isTagCollapsed, setIsTagCollapsed] = useState(true);
   const [isColorCollapsed, setIsColorCollapsed] = useState(true);
-  const { user } = useAuthentication();
+  const { user } = useUser();
   useEffect(() => {
     const fetchData = async () => {
       try {
         if(user){
 
           setLoading(true);
-          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/getAllColors/${user.uid}`);
+          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/getAllColors/userUID`);
           setAllColors(response.data);
         }
       } catch (error) {
@@ -96,7 +97,7 @@ const FilterScreen = () => {
         tags: selectedTags,
         fabric: selectedFabric
       }
-      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/closet/filter/${user.uid}`, data, {
+      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/closet/filter/userUID`, data, {
         headers: {
           'Content-Type': 'application/json',
         }

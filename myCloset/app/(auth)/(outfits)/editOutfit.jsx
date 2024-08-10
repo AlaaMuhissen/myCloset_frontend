@@ -4,16 +4,17 @@ import axios from 'axios';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import ViewShot from 'react-native-view-shot';
 import { DraxProvider } from 'react-native-drax';
-import MovableAndResizableSquare from '../components/Outfit/MovableAndResizableSquare';
-import { uploadImage } from '../config/cloudinary';
-import ClothesGrid from '../components/User_Categories/ClothesGrid.jsx';
-import CategoryList from '../components/User_Categories/CategoryList';
-import SubCategoryList from '../components/User_Categories/SubCategoryList';
+import MovableAndResizableSquare from '../../../components/Outfit/MovableAndResizableSquare.jsx';
+import { uploadImage } from '../../../config/cloudinary.js';
+import ClothesGrid from '../../../components/User_Categories/ClothesGrid.jsx';
+import CategoryList from '../../../components/User_Categories/CategoryList.jsx';
+import SubCategoryList from '../../../components/User_Categories/SubCategoryList.jsx';
 import { Ionicons } from '@expo/vector-icons';
-import { categories } from '../assets/data/categories';
-import { COLORS } from '../constants';
-import Header from '../components/Header';
-import { useAuthentication } from '../utils/hooks/useAuthentication.js';
+import { categories } from '../../../assets/data/categories.js';
+import { COLORS } from '../../../constants/index.js';
+import Header from '../../../components/Header.jsx';
+import { useAuthentication } from '../../../utils/hooks/useAuthentication.js';
+import { useUser } from '@clerk/clerk-expo';
 
 const { height } = Dimensions.get('window');
 
@@ -37,7 +38,7 @@ const EditOutfit = () => {
     const [captureMode, setCaptureMode] = useState(false);
     const viewShotRef = useRef(null);
     const [refreshing, setRefreshing] = useState(false);
-    const { user } = useAuthentication();
+    const { user } = useUser();
     useEffect(() => {
       if (outfit) {
         setItemsId(outfit.itemsId);
@@ -54,7 +55,7 @@ const EditOutfit = () => {
       try {
         if(user){
         setLoading(true);
-        const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}`);
+        const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/userUID`);
         setClothesData(new Map(Object.entries(response.data.categories)));
         }
       } catch (error) {
@@ -183,12 +184,12 @@ const EditOutfit = () => {
         };
         console.log(updatedOutfit)
         if (saveAsNew) {
-          await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/${season}`, updatedOutfit, {
+          await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/outfit/userUID/${season}`, updatedOutfit, {
             headers: { 'Content-Type': 'application/json' }
           });
           Alert.alert('Success', 'New outfit created successfully!');
         } else {
-          await axios.put(`https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/${season}/${outfit._id}`, updatedOutfit, {
+          await axios.put(`https://mycloset-backend-hnmd.onrender.com/api/outfit/userUID/${season}/${outfit._id}`, updatedOutfit, {
             headers: { 'Content-Type': 'application/json' }
           });
           Alert.alert('Success', 'Outfit updated successfully!');

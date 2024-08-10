@@ -8,6 +8,7 @@ import { Image as CachedImage } from 'react-native-expo-image-cache';
 import Header from '../Header';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
+import { useUser } from '@clerk/clerk-expo';
 
 const OutfitDetails = ({ route }) => {
   const { item } = route.params;
@@ -16,7 +17,7 @@ const OutfitDetails = ({ route }) => {
   const [previewItem, setPreviewItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
-  const { user } = useAuthentication();
+  const { user } = useUser();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -24,7 +25,7 @@ const OutfitDetails = ({ route }) => {
         const itemsDetails = await Promise.all(item.itemsId.map(async (itemId) => {
           const category = item.itemsSource[itemId].category;
           const subCategory = item.itemsSource[itemId].subCategory;
-          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/${user.uid}/${category}/${subCategory}/${itemId}`);
+          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/closet/userUID/${category}/${subCategory}/${itemId}`);
           return response.data;
         }));
         console.log(itemsDetails);
@@ -53,7 +54,7 @@ const OutfitDetails = ({ route }) => {
         season : "Summer",
         outfitId: outfit._id
       };
-      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/outfit/addToFavorite/${user.uid}`, data, {
+      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/outfit/addToFavorite/userUID`, data, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer YOUR_AUTH_TOKEN', 
@@ -86,7 +87,7 @@ const OutfitDetails = ({ route }) => {
       };
       console.log(data)
       console.log(user.uid)
-      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/outfit/logOutfitUsage/${user.uid}`, data, {
+      const response = await axios.post(`https://mycloset-backend-hnmd.onrender.com/api/outfit/logOutfitUsage/userUID`, data, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer YOUR_AUTH_TOKEN', 

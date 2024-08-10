@@ -1,7 +1,7 @@
 {
   "name": "mycloset",
   "version": "1.0.0",
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -57,6 +57,7 @@
     "expo-notifications": "~0.28.9",
     "expo-router": "~3.5.17",
     "expo-secure-store": "^13.0.2",
+    "expo-splash-screen": "~0.27.5",
     "expo-status-bar": "~1.12.1",
     "expo-updates": "~0.25.18",
     "expo-web-browser": "~13.0.3",
@@ -85,6 +86,7 @@
     "react-native-haptic-feedback": "^2.2.0",
     "react-native-image-picker": "^7.1.2",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
+    "react-native-loading-spinner-overlay": "^3.0.1",
     "react-native-modal": "^13.0.1",
     "react-native-pager-view": "6.3.0",
     "react-native-paper": "^5.12.3",
@@ -103,7 +105,7 @@
     "react-native-virtualized-view": "^1.0.0",
     "react-native-web": "~0.19.6",
     "run": "^1.5.0",
-    "expo-splash-screen": "~0.27.5"
+    "expo-device": "~6.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

@@ -3,12 +3,13 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Image, But
 import axios from 'axios';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { COLORS ,FONT} from '../constants';
-import Header from '../components/Header';
+import { COLORS ,FONT} from '../../../constants';
+import Header from '../../../components/Header';
 
-import outfitPlaceHolder from '../assets/outfitPlaceHolder.jpg'
-import { useAuthentication } from '../utils/hooks/useAuthentication';
+import outfitPlaceHolder from '../../../assets/outfitPlaceHolder.jpg'
+import { useAuthentication } from '../../../utils/hooks/useAuthentication';
 import { Skeleton } from 'moti/skeleton';
+import { useUser } from '@clerk/clerk-expo';
 
 function FavoriteOutfit() {
     const [outfits, setOutfits] = useState([]);
@@ -18,7 +19,7 @@ function FavoriteOutfit() {
     const [isSelectionMode, setIsSelectionMode] = useState(false);
     const [selectedItems, setSelectedItems] = useState(new Set());
     const [isSelectedAll, setIsSelectedAll] = useState(false);
-    const { user } = useAuthentication();
+    const { user } = useUser();
   
     const getSeasonIcon = (season) => {
       switch (season) {
@@ -40,7 +41,7 @@ function FavoriteOutfit() {
         if(user){
 
           setLoading(true);
-          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/outfit/getFavoriteOutfit/${user.uid}/${selectedSeason}`);
+          const response = await axios.get(`https://mycloset-backend-hnmd.onrender.com/api/outfit/getFavoriteOutfit/userUID/${selectedSeason}`);
           if (response.data) {
               console.log(response.data)
             setOutfits(response.data.favoriteOutfits);
@@ -86,7 +87,7 @@ function FavoriteOutfit() {
             outfitId: outfit.outfitId
           };
           const response = await axios.delete(
-            `https://mycloset-backend-hnmd.onrender.com/api/outfit/deleteFromFavorite/${user.uid}`,
+            `https://mycloset-backend-hnmd.onrender.com/api/outfit/deleteFromFavorite/userUID`,
             {
               headers: {
                 'Content-Type': 'application/json',
@@ -114,7 +115,7 @@ function FavoriteOutfit() {
   
       try{
         setLoading(true);
-        const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/outfit/${user.uid}/${selectedSeason}`, {
+        const response = await axios.delete(`https://mycloset-backend-hnmd.onrender.com/api/outfit/userUID/${selectedSeason}`, {
           data: { itemsId: Array.from(selectedItems) }
         });
         if (response.status === 200) {

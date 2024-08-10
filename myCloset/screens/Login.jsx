@@ -73,7 +73,7 @@ export default function LoginWithEmail() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { user } = useAuthentication();
+  //
   const navigation = useNavigation()
    console.log(API_KEY)
   const signIn = async () => {

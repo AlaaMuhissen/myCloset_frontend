@@ -1,28 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { useAuthentication } from '../utils/hooks/useAuthentication';
-import { getAuth } from 'firebase/auth';
-import Header from '../components/Header';
-import { getIconComponent } from '../components/Logics/getIconComponent';
-import InfoCard from '../components/Home/InfoCard';
-import ShowCategories from '../components/User_Categories/ShowCategories';
-import GetWeather from '../components/Logics/GetWeather';
-import SearchBar from '../components/Home/SearchBar';
+
+
+import Header from '../../../../components/Header';
+import { getIconComponent } from '../../../../components/Logics/getIconComponent';
+import InfoCard from '../../../../components/Home/InfoCard';
+import ShowCategories from '../../../../components/User_Categories/ShowCategories';
+import GetWeather from '../../../../components/Logics/GetWeather';
+import SearchBar from '../../../../components/Home/SearchBar';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import AIOutfitSuggestions from '../components/AIOutfitSuggestions';
-import { COLORS } from '../constants';
+import AIOutfitSuggestions from '../../../../components/AIOutfitSuggestions';
+import { COLORS } from '../../../../constants';
 import { useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import RNPickerSelect from 'react-native-picker-select';
 import Modal from 'react-native-modal';
-import { cities } from '../assets/data/cities';
+import { cities } from '../../../../assets/data/cities';
 import { Dropdown } from 'react-native-element-dropdown';
 import { Skeleton } from 'moti/skeleton';
 
-const auth = getAuth();
+
 const Dashboard = () => {
-  const { user } = useAuthentication();
+  //
   const navigation = useNavigation();
   const [location, setLocation] = useState(null);
   const [city, setCity] = useState('');

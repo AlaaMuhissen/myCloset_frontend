@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback, Image, ScrollView } from 'react-native';
 import { TextInput, Button, Card, Title, Paragraph, ActivityIndicator } from 'react-native-paper';
-import { getAuth, updateProfile } from 'firebase/auth';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native';
-import { COLORS } from '../constants';
+import { COLORS } from '../../../constants';
 import * as ImagePicker from 'expo-image-picker';
-import { useAuthentication } from '../utils/hooks/useAuthentication';
-import { uploadImage } from '../config/cloudinary';
+import { useAuthentication } from '../../../utils/hooks/useAuthentication';
+import { uploadImage } from '../../../config/cloudinary';
 import { Skeleton } from 'moti/skeleton';
-
+import { useAuth, useUser } from '@clerk/clerk-expo';
 const EditProfileScreen = () => {
-  const { user } = useAuthentication();
+  //
   const [displayName, setDisplayName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [photoURL, setPhotoURL] = useState('');
   const [loading, setLoading] = useState(true);
   const [image, setImage] = useState(null);
+  const { user } = useUser();
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -32,13 +32,13 @@ const EditProfileScreen = () => {
   const handleUpdate = async () => {
     setLoading(true);
     try {
-      const auth = getAuth();
-      await updateProfile(auth.currentUser, {
-        displayName,
-        phoneNumber,
-        photoURL,
-      });
-      Alert.alert('Success', 'Profile updated successfully');
+      // const auth = getAuth();
+      // await updateProfile(auth.currentUser, {
+      //   displayName,
+      //   phoneNumber,
+      //   photoURL,
+      // });
+      // Alert.alert('Success', 'Profile updated successfully');
       navigation.goBack();
     } catch (error) {
       Alert.alert('Error', error.message);
