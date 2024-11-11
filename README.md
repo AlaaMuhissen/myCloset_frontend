@@ -1,9 +1,24 @@
-# 👗 myCloset Frontend
+# 👗 myCloset App Frontend
 
 Welcome to the **myCloset Frontend** repository! This is the user-facing part of the *myCloset* fashion app, created with **React Native** and **Expo** to deliver an intuitive and stylish wardrobe management experience. With *myCloset*, users can effortlessly organize their clothes, gain insights into their wardrobe, and—most importantly—get outfit suggestions that are perfect for the current temperature and any occasion. *myCloset* takes the guesswork out of what to wear, making every day a little easier and a lot more fashionable!
 
 - 🔗 **Backend Repository**: [myCloset Backend](https://github.com/AlaaMuhissen/myCloset_backend)
-- 🔗 **Machine Leaning Repository**: [myCloset ML](https://github.com/AlaaMuhissen/myCloset_ML)
+- 🔗 **Machine Learning Repository**: [myCloset ML](https://github.com/AlaaMuhissen/myCloset_ML)
+
+## 📑 Table of Contents
+- [🚀 Features](#-features)
+- [🛠 Technologies](#-technologies)
+- [⚙️ Setup](#️-setup)
+- [📱 Screens](#-screens)
+  - [Screenshots](#screenshots)
+    - [Sign In & Sign Up Screens](#sign-in--sign-up-screens)
+    - [Home Screen](#home-screen)
+    - [Wardrobe Display](#wardrobe-display)
+    - [Statistics](#statistics)
+    - [Add New Clothing Item and Recognize Its Details](#add_new_clothing_item_and_recognize_its_details)
+    - [Manual Outfit Generate Screen](#manual-outfit-generate-screen)
+    - [Additional Screens](#additional-screens)
+- [🤝 Contributing](#-contributing)
 
 ## 🚀 Features
 - **User Authentication**: Secure login and registration through Firebase/Clerk, keeping your wardrobe private and accessible.
@@ -66,7 +81,7 @@ Welcome to the **myCloset Frontend** repository! This is the user-facing part of
 <img src="https://github.com/user-attachments/assets/d0ad6f21-2aa9-4e0a-b02e-9038b11c64cd" alt="Statistics Screen 1" width="200" height="400"/>
 <img src="https://github.com/user-attachments/assets/daa1bda2-5d7a-405a-83bf-cdd304d23873" alt="Statistics Screen 2" width="200" height="400"/>
 
-#### Add Items and Recognize Details
+#### Add New Clothing Item and Recognize Its Details
 <img src="https://github.com/user-attachments/assets/d8ae416e-a57f-4c10-940d-4fa041806499" alt="Add Item Screen" width="200" height="400"/>
 <img src="https://github.com/user-attachments/assets/e28d0949-a117-44ff-9ded-ed011190294f" alt="Recognize Details Screen" width="200" height="400"/>
 
